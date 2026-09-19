@@ -3,6 +3,7 @@ title: 왜 정적 사이트인가
 description: Notion, 티스토리, velog 를 두고 굳이 직접 만든 이유.
 order: 1
 date: 2025-07-08
+draft: true   # 샘플입니다. 실제 글로 교체하면서 이 줄을 지우세요
 ---
 
 ## 기록의 단위가 다르다

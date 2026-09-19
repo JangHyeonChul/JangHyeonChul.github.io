@@ -4,6 +4,7 @@ description: 다시 한다면 무엇을 다르게 할 것인가.
 order: 4
 category: 회고
 date: 2025-06-20
+draft: true   # 샘플입니다. 실제 글로 교체하면서 이 줄을 지우세요
 ---
 
 ## 잘한 것

@@ -4,6 +4,7 @@ description: 기성 솔루션을 안 쓴 이유와, 처음 그린 아키텍처.
 order: 1
 category: 기획
 date: 2025-03-04
+draft: true   # 샘플입니다. 실제 글로 교체하면서 이 줄을 지우세요
 ---
 
 ## 시작점

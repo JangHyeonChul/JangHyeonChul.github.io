@@ -4,6 +4,7 @@ description: 인스턴스 간 메시지 전파를 Redis Pub/Sub 으로 해결한
 order: 3
 category: 트러블슈팅
 date: 2025-05-02
+draft: true   # 샘플입니다. 실제 글로 교체하면서 이 줄을 지우세요
 ---
 
 ## 증상

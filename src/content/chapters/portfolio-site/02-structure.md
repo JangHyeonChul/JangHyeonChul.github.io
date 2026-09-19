@@ -3,6 +3,7 @@ title: 폴더 구조가 곧 URL 이 되게 하기
 description: Astro Content Collections 로 3단 계층을 표현한 방법.
 order: 2
 date: 2025-07-15
+draft: true   # 샘플입니다. 실제 글로 교체하면서 이 줄을 지우세요
 ---
 
 ## 규칙 하나

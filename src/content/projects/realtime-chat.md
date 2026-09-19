@@ -5,6 +5,7 @@ stack: [Go, Redis, PostgreSQL, Docker]
 period: 2025.03 – 2025.06
 order: 1
 repo: https://github.com/JangHyeonChul
+draft: true   # 샘플입니다. 실제 글로 교체하면서 이 줄을 지우세요
 ---
 
 메시지 브로커 없이 시작해서, 결국 Redis Pub/Sub 을 얹기까지의 과정을 정리했습니다.
