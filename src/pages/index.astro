@@ -1,0 +1,161 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjects, getChapterCounts } from '../lib/content';
+import { site } from '../site.config';
+
+const projects = await getProjects();
+const counts = await getChapterCounts();
+
+// 글자 단위 등장을 위해 이름을 분해합니다. (이모지/한글 안전하게 코드포인트 단위)
+const nameChars = [...site.name];
+const STEP = 34;    // 글자 간 간격(ms)
+const LEAD = 140;   // 첫 글자가 시작하기까지(ms)
+const afterName = LEAD + nameChars.length * STEP;
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="wrap">
+      <p class="hero__role">{site.role}</p>
+
+      <h1 class="hero__name" aria-label={site.name}>
+        {nameChars.map((ch, i) => (
+          <span
+            class="hero__char"
+            style={`--d:${LEAD + i * STEP}ms`}
+            aria-hidden="true"
+          >{ch === ' ' ? '\u00A0' : ch}</span>
+        ))}
+      </h1>
+
+      <span class="hero__rule" style={`--d:${afterName}ms`} aria-hidden="true"></span>
+
+      <p class="hero__tag" style={`--d:${afterName + 90}ms`}>{site.tagline}</p>
+    </div>
+  </section>
+
+  <section class="works wrap">
+    <div class="works__head">
+      <h2 class="section-title">프로젝트</h2>
+      <span class="caption">{projects.length}개</span>
+    </div>
+
+    {projects.length === 0 ? (
+      /* HDS Empty 상태: 일러스트 없이, 조용하고 정직하게 */
+      <div class="empty">
+        <p class="empty__line">아직 등록된 프로젝트가 없습니다.</p>
+        <p class="caption">
+          <code>src/content/projects/</code> 에 <code>.md</code> 파일을 추가하면 이 자리에 카드가 생깁니다.
+        </p>
+      </div>
+    ) : (
+      <div class="grid">
+        {projects.map((p, i) => (
+          <ProjectCard project={p} chapterCount={counts[p.id] ?? 0} index={i} />
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  /* 히어로는 브랜드 틴트 밴드 — HDS 의 #eefbfb 섹션에 대응 */
+  .hero {
+    background: var(--brand-tint);
+    border-bottom: 1px solid var(--hairline);
+    padding-block: var(--s12);
+    margin-bottom: var(--s12);
+  }
+
+  /* ── 등장 시퀀스 ───────────────────────────────────────
+     역할 라벨 → 이름(글자 단위) → 브랜드 룰 → 태그라인.
+     각 요소의 지속시간은 HDS 모션 토큰을 벗어나지 않고,
+     스태거로만 리듬을 만든다. 바운스·스프링 없음.         */
+
+  .hero__role {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brand-bright);
+    margin-bottom: var(--s2);
+    animation: rise var(--t-std) var(--e-enter) both;
+  }
+
+  .hero__name {
+    font-size: clamp(34px, 6.5vw, 54px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -1.5px;
+    color: var(--ink);
+    /* 블러가 잘리지 않도록 약간의 여유 */
+    padding-block: 0.06em;
+  }
+
+  .hero__char {
+    display: inline-block;
+    white-space: pre;
+    animation: charIn var(--t-slow) var(--e-enter) both;
+    animation-delay: var(--d, 0ms);
+    /* 합성만으로 처리되도록 힌트 */
+    will-change: transform, opacity, filter;
+  }
+
+  .hero__rule {
+    display: block;
+    width: 56px;
+    height: 2px;
+    margin-block: var(--s4) var(--s4);
+    background: var(--brand);
+    border-radius: var(--r-pill);
+    transform-origin: left center;
+    animation: ruleIn var(--t-slow) var(--e-enter) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  .hero__tag {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 52ch;
+    word-break: keep-all;
+    animation: rise var(--t-std) var(--e-enter) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  /* 애니메이션이 끝나면 힌트를 거둔다 */
+  .hero__name:hover .hero__char { will-change: auto; }
+
+  .works__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s3);
+    margin-bottom: var(--s5);
+  }
+
+  /* HDS: 카드 그리드는 데스크톱 다열 → 모바일 1열 */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--s5);
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; gap: var(--s4); }
+    .hero { padding-block: var(--s8); margin-bottom: var(--s8); }
+  }
+
+  .empty {
+    padding: var(--s12) var(--s5);
+    border-radius: var(--r-card);
+    box-shadow: var(--ring);
+    text-align: center;
+  }
+  .empty__line { color: var(--ink); margin-bottom: var(--s2); }
+  .empty code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 0.15em 0.4em;
+    border-radius: var(--r-chip);
+    background: var(--surface-2);
+    color: var(--brand-bright);
+  }
+</style>

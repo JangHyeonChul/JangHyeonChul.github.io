@@ -1,0 +1,26 @@
+---
+import { site } from '../site.config';
+const year = new Date().getFullYear();
+---
+
+<footer class="ft">
+  <div class="wrap ft__in">
+    <p class="caption">© {year} {site.name}</p>
+    <p class="caption">Built with Astro · Deployed on GitHub Pages</p>
+  </div>
+</footer>
+
+<style>
+  .ft {
+    margin-top: var(--s12);
+    border-top: 1px solid var(--hairline);
+  }
+  .ft__in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s2);
+    padding-block: var(--s6);
+  }
+</style>

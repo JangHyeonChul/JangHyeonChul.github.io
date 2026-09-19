@@ -1,0 +1,127 @@
+/* ============================================================
+   Hwahae Design System — Light (원문) / Dark (적응)
+   ------------------------------------------------------------
+   Light  = HDS 문서의 값을 그대로 사용한 원본 팔레트  ← 기본값
+   Dark   = 원문의 뉴트럴 사다리를 반전해 유도한 다크 표면
+
+   구조 토큰(라디우스/스페이싱/모션/타입)은 테마와 무관하게
+   HDS 원문 값을 공유합니다.
+   ============================================================ */
+
+:root {
+  /* ── Radius ────────────────────────── HDS 값 그대로 ── */
+  --r-chip: 4px;      /* 칩, 작은 배지 */
+  --r-ctl:  8px;      /* 버튼, 입력, 유틸 컨트롤 (workhorse) */
+  --r-card: 16px;     /* 카드 — 지배적 컨테이너 라디우스 */
+  --r-blog: 20px;     /* 블로그 표면 에디토리얼 카드 */
+  --r-pill: 99999px;  /* 필, 아바타 */
+
+  /* ── Spacing ───────────────────────── HDS 4px 베이스 ── */
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 20px; --s6: 24px; --s8: 32px; --s12: 48px;
+
+  /* ── Motion ────────────────────────── HDS 값 그대로 ── */
+  --t-fast: 120ms;  /* 호버, 칩 프레스, 포커스 */
+  --t-std:  200ms;  /* 카드/섹션 등장, 캐러셀 */
+  --t-slow: 320ms;  /* 페이지 전환 */
+  --e-enter: cubic-bezier(0.2, 0.6, 0.25, 1);
+  --e-exit:  cubic-bezier(0.4, 0, 1, 1);
+  --e-std:   cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ── Type ──────────────────────────── HDS 2-surface 규칙 ── */
+  --font-product: 'Pretendard Variable', Pretendard, -apple-system,
+                  'Apple SD Gothic Neo', 'Noto Sans KR', Roboto, sans-serif;
+  --font-blog:    'Spoqa Han Sans Neo', 'Spoqa Han Sans', Roboto,
+                  'Malgun Gothic', sans-serif;
+  --font-mono:    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ── Layout ────────────────────────────────────────── */
+  --maxw: 1280px;
+  --maxw-prose: 760px;
+
+  /* ── Elevation (링은 테마 공용) ────────────────────── */
+  --ring: inset 0 0 0 1px var(--hairline);
+}
+
+/* ============================================================
+   LIGHT — 기본 테마. HDS 원문 팔레트 그대로.
+   data-theme 속성이 없으면 이 값이 적용됩니다.
+   ============================================================ */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* Brand */
+  --brand:            #00d5ce;  /* Hwahae Turquoise */
+  --brand-bright:     #00a5aa;  /* 밝은 배경에선 딥 틸이 대비를 확보 */
+  --brand-deep:       #00a5aa;
+  --on-brand:         #ffffff;  /* HDS: 브랜드색 위 전경은 흰색 */
+  --brand-tint:       #eefbfb;  /* HDS Mint Tint */
+  --brand-tint-line:  #b9ecec;
+
+  /* Functional accents — HDS 값 그대로 */
+  --amber:  #ffaa3c;  /* 평점 전용. 이 사이트엔 평점이 없어 미사용 */
+  --blue:   #467dff;  /* HDS Action Blue */
+  --coral:  #ff5555;  /* HDS Alert Coral */
+
+  /* Surface — HDS 값 그대로 */
+  --canvas:    #f7f7f7;  /* HDS Surface Grey */
+  --surface:   #ffffff;  /* HDS Canvas White */
+  --surface-2: #fbfbfb;
+  --hairline:  #e8e8e8;  /* HDS Hairline */
+  --divider:   #d8d8d8;  /* HDS Divider */
+  --code-bg:   #f7f7f7;
+
+  /* Ink — HDS 값 그대로 */
+  --ink:         #000000;  /* HDS Ink Black */
+  --ink-soft:    #111111;  /* HDS Ink Soft */
+  --body:        #3d3d3d;  /* HDS Body */
+  --muted:       #666666;  /* HDS Muted */
+  --faint:       #999999;  /* HDS Faint */
+  --placeholder: #aaaaaa;  /* HDS Placeholder */
+
+  /* HDS Level 2 카드 그림자 — 문서 값 그대로 */
+  --shadow-card: rgba(0, 0, 0, 0.08) 0px 2px 8px 0px;
+  --header-bg: color-mix(in srgb, var(--canvas) 85%, transparent);
+}
+
+/* ============================================================
+   DARK — 토글로만 진입.
+   HDS 에 다크 값이 없어 원문 뉴트럴 사다리를 반전해 유도.
+   ============================================================ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Brand — HDS 값 그대로 */
+  --brand:            #00d5ce;
+  --brand-bright:     #22d3d6;  /* 블로그 실측 렌더 — 다크 위 텍스트/링크 */
+  --brand-deep:       #00a5aa;
+  --on-brand:         #002b2a;  /* 터콰이즈 채움 위 전경 */
+  --brand-tint:       rgba(34, 211, 214, 0.08);   /* ← #eefbfb 대응 */
+  --brand-tint-line:  rgba(34, 211, 214, 0.22);
+
+  /* Functional accents — 다크 대비에 맞춰 상향 */
+  --amber:  #ffaa3c;
+  --blue:   #7aa2ff;  /* ← #467dff */
+  --coral:  #ff6b6b;  /* ← #ff5555 */
+
+  /* Surface — 유도한 값 */
+  --canvas:    #0e0f11;  /* ← #f7f7f7 */
+  --surface:   #16181c;  /* ← #ffffff */
+  --surface-2: #1c1f24;
+  --hairline:  #26292f;  /* ← #e8e8e8 */
+  --divider:   #33373e;  /* ← #d8d8d8 */
+  --code-bg:   #0a0b0d;
+
+  /* Ink — 유도한 값 */
+  --ink:         #ffffff;  /* ← #000000 */
+  --ink-soft:    #eceef1;  /* ← #111111 */
+  --body:        #c2c6cc;  /* ← #3d3d3d */
+  --muted:       #9aa0a8;  /* ← #666666 */
+  --faint:       #767c85;  /* ← #999999 */
+  --placeholder: #5f656d;  /* ← #aaaaaa */
+
+  /* 다크에서는 그림자가 거의 안 읽혀 더 깊게 */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --header-bg: color-mix(in srgb, var(--canvas) 88%, transparent);
+}

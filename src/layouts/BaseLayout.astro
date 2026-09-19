@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../site.config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** 글 페이지는 'blog' — HDS 의 2-surface 규칙에 따라 타이포가 바뀝니다 */
+  surface?: 'product' | 'blog';
+}
+
+const { title, description = site.description, surface = 'product' } = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com');
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* 저장된 테마를 페인트 전에 적용 — 새로고침 시 깜빡임 방지.
+        기본값은 라이트라 속성이 없으면 그대로 라이트로 그려집니다. */}
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.setAttribute('data-theme', t);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#f7f7f7" data-theme-color />
+
+    <meta property="og:type" content={surface === 'blog' ? 'article' : 'website'} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body data-surface={surface}>
+    <a class="skip" href="#main">본문으로 건너뛰기</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: var(--s3);
+    z-index: 100;
+    padding: var(--s2) var(--s4);
+    border-radius: var(--r-ctl);
+    background: var(--brand);
+    color: var(--on-brand);
+    font-weight: 600;
+  }
+  .skip:focus { left: var(--s5); }
+
+  main { display: block; }
+</style>

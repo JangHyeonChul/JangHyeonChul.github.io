@@ -1,0 +1,85 @@
+---
+import { site } from '../site.config';
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname;
+const onHome = path === '/';
+---
+
+<header class="hd">
+  <div class="wrap hd__in">
+    <a class="hd__brand" href="/" aria-current={onHome ? 'page' : undefined}>
+      <span class="hd__mark" aria-hidden="true"></span>
+      <span class="hd__name">{site.name}</span>
+    </a>
+
+    <div class="hd__right">
+      <nav class="hd__nav" aria-label="주요">
+        {site.links.map((l) => (
+          <a class="hd__link" href={l.href} rel="noopener noreferrer" target="_blank">{l.label}</a>
+        ))}
+      </nav>
+      <span class="hd__sep" aria-hidden="true"></span>
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+
+<style>
+  /* HDS Navigation: 15px, weight 400 (active 600), ink-soft */
+  .hd {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--header-bg);
+    backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--hairline);  /* HDS: 헤어라인으로 분리 */
+  }
+  .hd__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
+    height: 60px;
+  }
+  .hd__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  /* 브랜드 마크 — 터콰이즈는 아이덴티티에만, 장식으로 퍼뜨리지 않는다 */
+  .hd__mark {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--r-pill);
+    background: var(--brand);
+  }
+
+  .hd__right { display: flex; align-items: center; gap: var(--s1); }
+  .hd__nav { display: flex; align-items: center; gap: var(--s1); }
+  .hd__link {
+    padding: 0 var(--s3);
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--r-ctl);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .hd__link:hover { color: var(--ink-soft); background: var(--surface); }
+
+  .hd__sep {
+    width: 1px;
+    height: 18px;
+    margin-inline: var(--s2);
+    background: var(--hairline);
+  }
+  @media (max-width: 480px) {
+    .hd__sep { margin-inline: var(--s1); }
+    .hd__link { padding: 0 var(--s2); }
+  }
+</style>

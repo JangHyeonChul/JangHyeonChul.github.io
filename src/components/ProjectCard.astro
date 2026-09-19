@@ -1,0 +1,125 @@
+---
+import type { Project } from '../lib/content';
+
+interface Props {
+  project: Project;
+  chapterCount: number;
+  index?: number;
+}
+
+const { project, chapterCount, index = 0 } = Astro.props;
+const { title, summary, stack, period, cover } = project.data;
+const href = `/projects/${project.id}/`;
+---
+
+<article class="card rise" style={`--delay:${index * 45}ms`}>
+  <a class="card__hit" href={href} aria-labelledby={`p-${project.id}`}>
+    <div class="card__cover">
+      {cover
+        ? <img src={cover} alt="" loading="lazy" decoding="async" width="600" height="338" />
+        : <span class="card__ph" aria-hidden="true">{title.slice(0, 1)}</span>}
+    </div>
+
+    <div class="card__body">
+      <h3 class="section-title card__title" id={`p-${project.id}`}>{title}</h3>
+      <p class="card__summary">{summary}</p>
+
+      {stack.length > 0 && (
+        <ul class="card__stack">
+          {stack.slice(0, 4).map((s) => <li class="chip">{s}</li>)}
+          {stack.length > 4 && <li class="chip">+{stack.length - 4}</li>}
+        </ul>
+      )}
+
+      <div class="card__meta caption">
+        <span class="card__count">챕터 {chapterCount}</span>
+        {period && <><span aria-hidden="true">·</span><span>{period}</span></>}
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  /* HDS Product Card: 16px 라디우스 + 헤어라인 링.
+     다크에서는 그림자가 거의 안 읽혀 링에 더 의존한다. */
+  .card {
+    position: relative;
+    border-radius: var(--r-card);
+    background: var(--surface);
+    box-shadow: var(--ring);
+    overflow: hidden;
+    transition:
+      transform var(--t-std) var(--e-enter),
+      background var(--t-std) var(--e-std),
+      box-shadow var(--t-std) var(--e-std);
+  }
+  .card:hover {
+    transform: translateY(-3px);        /* HDS: 살짝 떠오름, 바운스 없음 */
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px var(--brand-tint-line), var(--shadow-card);
+  }
+  .card:has(.card__hit:focus-visible) { transform: translateY(-3px); }
+
+  .card__hit { display: flex; flex-direction: column; height: 100%; }
+
+  /* 이미지가 색을 담당하고 크롬은 조용히 — HDS 원칙 3 */
+  .card__cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--brand-tint);
+    border-bottom: 1px solid var(--hairline);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .card__cover img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform var(--t-slow) var(--e-std);
+  }
+  .card:hover .card__cover img { transform: scale(1.03); }
+
+  .card__ph {
+    font-size: 44px;
+    font-weight: 700;
+    color: var(--brand-bright);
+    opacity: 0.55;
+    user-select: none;
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s3);
+    padding: var(--s5);
+    flex: 1;
+  }
+  .card__title { margin: 0; }
+  .card__summary {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    word-break: keep-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    margin-top: auto;
+    padding-top: var(--s2);
+  }
+  .card__count { color: var(--brand-bright); font-weight: 600; }
+</style>

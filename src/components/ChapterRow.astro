@@ -1,0 +1,90 @@
+---
+import type { Chapter } from '../lib/content';
+import { splitChapterId, formatDate } from '../lib/content';
+
+interface Props {
+  chapter: Chapter;
+  /** 목록에 보이는 번호 (1부터) */
+  n: number;
+  index?: number;
+}
+
+const { chapter, n, index = 0 } = Astro.props;
+const { project, chapter: slug } = splitChapterId(chapter.id);
+const href = `/projects/${project}/${slug}/`;
+const date = formatDate(chapter.data.date);
+---
+
+<a class="row rise" href={href} style={`--delay:${index * 35}ms`}>
+  <span class="row__n" aria-hidden="true">{String(n).padStart(2, '0')}</span>
+
+  <span class="row__main">
+    <span class="row__title">{chapter.data.title}</span>
+    {chapter.data.description && <span class="row__desc">{chapter.data.description}</span>}
+  </span>
+
+  <span class="row__side">
+    {date && <span class="caption">{date}</span>}
+    <svg class="row__arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor"
+            stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </span>
+</a>
+
+<style>
+  /* HDS: 행은 헤어라인으로 분리, 호버에만 표면이 살짝 올라온다 */
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--s4);
+    padding: var(--s5);
+    border-radius: var(--r-card);
+    background: var(--surface);
+    box-shadow: var(--ring);
+    transition:
+      background var(--t-fast) var(--e-std),
+      box-shadow var(--t-fast) var(--e-std),
+      transform var(--t-fast) var(--e-enter);
+  }
+  .row:hover {
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px var(--brand-tint-line);
+    transform: translateX(3px);
+  }
+
+  .row__n {
+    flex: none;
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--brand-bright);
+    opacity: 0.8;
+  }
+
+  .row__main { display: flex; flex-direction: column; gap: var(--s1); min-width: 0; flex: 1; }
+  .row__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    word-break: keep-all;
+  }
+  .row__desc {
+    font-size: 14px;
+    color: var(--muted);
+    word-break: keep-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .row__side { display: flex; align-items: center; gap: var(--s3); flex: none; }
+  .row__arrow { color: var(--faint); transition: color var(--t-fast) var(--e-std); }
+  .row:hover .row__arrow { color: var(--brand-bright); }
+
+  @media (max-width: 640px) {
+    .row { padding: var(--s4); gap: var(--s3); }
+    .row__side .caption { display: none; }
+  }
+</style>

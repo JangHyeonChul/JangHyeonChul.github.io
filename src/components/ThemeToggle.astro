@@ -1,0 +1,119 @@
+---
+/**
+ * 라이트 / 다크 전환.
+ * 기본값은 라이트(HDS 원문)이고, 선택은 localStorage 에 남습니다.
+ * 깜빡임 방지 스크립트는 BaseLayout <head> 에 인라인으로 들어가 있습니다.
+ */
+---
+
+<button
+  class="tt"
+  type="button"
+  data-theme-toggle
+  aria-label="어두운 테마로 전환"
+  title="테마 전환"
+>
+  <span class="tt__box">
+    <svg class="tt__ico tt__sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+      <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2" />
+        <path d="M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" />
+      </g>
+    </svg>
+
+    <svg class="tt__ico tt__moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path
+        d="M20 13.6A8.2 8.2 0 1 1 10.4 4a6.6 6.6 0 0 0 9.6 9.6Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
+</button>
+
+<style>
+  .tt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-ctl);   /* HDS workhorse 8px */
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      background var(--t-fast) var(--e-std),
+      color var(--t-fast) var(--e-std);
+  }
+  .tt:hover { background: var(--surface); color: var(--ink-soft); }
+
+  .tt__box {
+    position: relative;
+    display: block;
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 두 아이콘을 겹쳐두고 회전 + 페이드로 교차 — HDS: 바운스 없이 조용하게 */
+  .tt__ico {
+    position: absolute;
+    inset: 0;
+    transition:
+      opacity var(--t-std) var(--e-std),
+      transform var(--t-std) var(--e-std);
+  }
+
+</style>
+
+<style is:global>
+  /* 테마에 따라 아이콘을 교차시킨다.
+     스코프 블록에서는 :global(:root[...]) 의 조상 부분이 컴파일 때 사라지므로
+     이 규칙들은 반드시 전역 블록에 있어야 한다. */
+
+  /* 기본(라이트) — 달을 보여준다: 누르면 어두워진다 */
+  .tt__sun  { opacity: 0; transform: rotate(90deg) scale(0.5); }
+  .tt__moon { opacity: 1; transform: rotate(0deg) scale(1); }
+
+  /* 다크 — 해를 보여준다: 누르면 밝아진다 */
+  :root[data-theme='dark'] .tt__sun  { opacity: 1; transform: rotate(0deg) scale(1); }
+  :root[data-theme='dark'] .tt__moon { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const btn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+
+  const current = () => (root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+  function syncLabel() {
+    if (!btn) return;
+    btn.setAttribute(
+      'aria-label',
+      current() === 'light' ? '어두운 테마로 전환' : '밝은 테마로 전환',
+    );
+    // 모바일 브라우저 주소창 색도 같이 맞춘다 (tokens.css 의 --canvas 값)
+    document
+      .querySelector('meta[data-theme-color]')
+      ?.setAttribute('content', current() === 'light' ? '#f7f7f7' : '#0e0f11');
+  }
+
+  btn?.addEventListener('click', () => {
+    const next = current() === 'light' ? 'dark' : 'light';
+
+    // 전환 순간에만 색상 트랜지션을 켠다 (평소엔 붙이지 않아 초기 로드가 깔끔)
+    root.classList.add('theme-switching');
+    root.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      /* 프라이빗 모드 등 저장 불가 — 이번 세션에만 적용된다 */
+    }
+    syncLabel();
+    window.setTimeout(() => root.classList.remove('theme-switching'), 260);
+  });
+
+  syncLabel();
+</script>

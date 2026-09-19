@@ -1,0 +1,215 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ChapterRow from '../../../components/ChapterRow.astro';
+import { getProjects, getChapters, groupChapters } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { project: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { title, summary, stack, period, cover, repo, demo } = project.data;
+
+const chapters = await getChapters(project.id);
+const { grouped, groups } = groupChapters(chapters);
+
+// 프로젝트 .md 본문이 있으면 개요로 렌더
+const { Content } = await render(project);
+const hasIntro = (project.body ?? '').trim().length > 0;
+
+// 그룹을 넘나들며 번호가 이어지도록 오프셋 계산
+let counter = 0;
+const numbered = groups.map((g) => {
+  const items = g.items.map((c) => ({ chapter: c, n: ++counter }));
+  return { name: g.name, items };
+});
+---
+
+<BaseLayout title={title} description={summary}>
+  <section class="top">
+    <div class="wrap">
+      <nav class="crumb" aria-label="경로">
+        <a href="/">프로젝트</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{title}</span>
+      </nav>
+
+      <div class="top__grid">
+        <div class="top__text">
+          <h1 class="top__title">{title}</h1>
+          <p class="top__summary rise" style="--delay:60ms">{summary}</p>
+
+          <div class="top__facts rise" style="--delay:100ms">
+            {period && <span class="caption">{period}</span>}
+            {period && <span class="caption" aria-hidden="true">·</span>}
+            <span class="caption">챕터 {chapters.length}개</span>
+          </div>
+
+          {stack.length > 0 && (
+            <ul class="top__stack rise" style="--delay:140ms">
+              {stack.map((s) => <li class="chip">{s}</li>)}
+            </ul>
+          )}
+
+          {(repo || demo) && (
+            <div class="top__links rise" style="--delay:180ms">
+              {repo && <a class="btn btn--ghost" href={repo} target="_blank" rel="noopener noreferrer">저장소</a>}
+              {demo && <a class="btn btn--primary" href={demo} target="_blank" rel="noopener noreferrer">데모 보기</a>}
+            </div>
+          )}
+        </div>
+
+        {cover && (
+          <div class="top__cover rise" style="--delay:80ms">
+            <img src={cover} alt="" width="800" height="450" decoding="async" />
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  {hasIntro && (
+    <section class="wrap intro">
+      <div class="intro__card">
+        <div class="prose"><Content /></div>
+      </div>
+    </section>
+  )}
+
+  <section class="wrap chapters">
+    <div class="chapters__head">
+      <h2 class="section-title">챕터</h2>
+      <span class="caption">클릭하면 글이 열립니다</span>
+    </div>
+
+    {chapters.length === 0 ? (
+      <div class="empty">
+        <p class="empty__line">아직 작성된 챕터가 없습니다.</p>
+        <p class="caption">
+          <code>src/content/chapters/{project.id}/</code> 에 <code>.md</code> 파일을 추가해 보세요.
+        </p>
+      </div>
+    ) : (
+      <div class="chapters__list">
+        {numbered.map((g) => (
+          <>
+            {grouped && <h3 class="group">{g.name}</h3>}
+            {g.items.map(({ chapter, n }, i) => (
+              <ChapterRow chapter={chapter} n={n} index={i} />
+            ))}
+          </>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .top {
+    background: var(--brand-tint);
+    border-bottom: 1px solid var(--hairline);
+    padding-block: var(--s5) var(--s12);
+    margin-bottom: var(--s12);
+  }
+
+  .crumb {
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    font-size: 13px;
+    color: var(--faint);
+    margin-bottom: var(--s6);
+  }
+  .crumb a { color: var(--muted); }
+  .crumb a:hover { color: var(--brand-bright); }
+  .crumb [aria-current] { color: var(--ink-soft); }
+
+  .top__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s8);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .top__grid:has(.top__cover) { grid-template-columns: 1fr 0.9fr; }
+  }
+
+  .top__text { display: flex; flex-direction: column; gap: var(--s4); align-items: flex-start; }
+  .top__title {
+    animation: titleIn var(--t-slow) var(--e-enter) both;
+    animation-delay: 60ms;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.8px;
+    color: var(--ink);
+  }
+  .top__summary {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 56ch;
+    word-break: keep-all;
+  }
+  .top__facts { display: flex; align-items: center; gap: var(--s2); }
+  .top__stack { display: flex; flex-wrap: wrap; gap: var(--s1); list-style: none; margin: 0; padding: 0; }
+  .top__links { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s1); }
+
+  .top__cover {
+    border-radius: var(--r-card);
+    overflow: hidden;
+    box-shadow: var(--ring), var(--shadow-card);
+  }
+  .top__cover img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+
+  .intro { margin-bottom: var(--s12); }
+  .intro__card {
+    padding: var(--s8);
+    border-radius: var(--r-card);
+    background: var(--surface);
+    box-shadow: var(--ring);
+  }
+  @media (max-width: 640px) { .intro__card { padding: var(--s5); } }
+
+  .chapters__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s3);
+    margin-bottom: var(--s5);
+  }
+  .chapters__list { display: flex; flex-direction: column; gap: var(--s3); }
+
+  /* 카테고리 그룹 헤더 — category 를 쓴 프로젝트에서만 나타난다 */
+  .group {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+    text-transform: uppercase;
+    margin-top: var(--s6);
+    padding-bottom: var(--s2);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .group:first-child { margin-top: 0; }
+
+  .empty {
+    padding: var(--s12) var(--s5);
+    border-radius: var(--r-card);
+    box-shadow: var(--ring);
+    text-align: center;
+  }
+  .empty__line { color: var(--ink); margin-bottom: var(--s2); }
+  .empty code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 0.15em 0.4em;
+    border-radius: var(--r-chip);
+    background: var(--surface-2);
+    color: var(--brand-bright);
+  }
+</style>
