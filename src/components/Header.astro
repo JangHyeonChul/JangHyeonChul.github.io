@@ -51,6 +51,9 @@ const onHome = path === '/';
     gap: var(--s2);
     height: 36px;
     padding-inline: var(--s3);
+    /* 패딩만큼 왼쪽으로 당겨, 아이콘이 히어로 본문과 같은 세로선에 선다.
+       호버 배경만 여백 쪽으로 조금 넘어간다. */
+    margin-left: calc(var(--s3) * -1);
     border-radius: var(--r-ctl);
     color: var(--muted);
     transition:
