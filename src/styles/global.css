@@ -263,6 +263,72 @@ a {
   to   { transform: scaleX(1); opacity: 1; }
 }
 
+/* ── Print ──────────────────────────────────────────────
+   경력기술서를 브라우저 인쇄로 PDF 뽑을 때의 규칙.
+   테마와 무관하게 흰 종이 기준으로 강제하고, 화면 전용
+   요소(.no-print)와 사이트 크롬은 종이에서 뺀다.          */
+@media print {
+  /* 다크 모드로 보고 있어도 종이는 흰색에서 출발한다 */
+  :root,
+  :root[data-theme='dark'],
+  :root[data-theme='light'] {
+    --canvas: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #ffffff;
+    --code-bg: #f6f6f6;
+    --ink: #000000;
+    --ink-soft: #111111;
+    --body: #222222;
+    --muted: #444444;
+    --faint: #666666;
+    --hairline: #dddddd;
+    --divider: #cccccc;
+    --brand: #0a7f83;
+    --brand-bright: #0a7f83;
+    --brand-deep: #0a7f83;
+    --brand-tint: #ffffff;
+    --brand-tint-line: #dddddd;
+    --shadow-card: none;
+  }
+
+  @page { margin: 16mm 14mm; }
+
+  html, body { background: #fff; }
+  body { font-size: 11pt; }
+
+  /* 사이트 크롬과 화면 전용 컨트롤은 종이에서 제외 */
+  .hd, .ft, .skip, .no-print { display: none !important; }
+  .wrap { max-width: none; padding-inline: 0; }
+
+  /* 등장 애니메이션은 인쇄 시점에 반쯤 걸려 있을 수 있다 */
+  .rise, [class*='__char'] { animation: none !important; opacity: 1 !important; transform: none !important; }
+
+  .prose { font-size: 10.5pt; line-height: 1.6; }
+  .prose > * + * { margin-top: 10pt; }
+  .prose h2 { font-size: 14pt; margin-top: 18pt; }
+  .prose h3 { font-size: 12pt; margin-top: 14pt; }
+  .prose h4 { font-size: 11pt; margin-top: 12pt; }
+
+  /* 제목만 남고 내용이 다음 장으로 넘어가는 것을 막는다 */
+  .prose h2, .prose h3, .prose h4 { break-after: avoid-page; page-break-after: avoid; }
+  .prose p, .prose li, .prose tr, .prose blockquote, .prose pre {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .prose table { display: table; font-size: 10pt; }
+  .prose pre { box-shadow: none; border: 1px solid #ddd; }
+  .prose img { box-shadow: none; border: 1px solid #ddd; }
+
+  /* 종이에서는 링크를 누를 수 없으니 주소를 밝혀 준다 */
+  .prose a { color: #000; text-decoration: underline; }
+  .prose a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    color: #666;
+    word-break: break-all;
+  }
+}
+
 /* HDS: reduced-motion 에서는 전부 즉시로 축소, 기능은 그대로 */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

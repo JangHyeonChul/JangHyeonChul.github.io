@@ -51,4 +51,19 @@ const chapters = defineCollection({
   }),
 });
 
-export const collections = { projects, chapters };
+/**
+ * resume — 경력기술서. 가장 최근 updated 문서 한 장이 /resume 에 실립니다.
+ */
+const resume = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/resume' }),
+  schema: z.object({
+    title: z.string(),
+    /** 페이지 상단 한 줄 */
+    summary: z.string().optional(),
+    /** 최종 수정일. 여러 장이면 이 값이 큰 것이 실립니다. */
+    updated: z.coerce.date(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { projects, chapters, resume };

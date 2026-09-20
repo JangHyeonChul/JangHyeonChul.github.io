@@ -1,9 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../site.config';
 import { about } from '../about.config';
 
 const { intro, education, career, certifications } = about;
+
+// 경력기술서가 공개돼 있을 때만 버튼을 세운다.
+const hasResume = (await getCollection('resume')).some(
+  (e) => import.meta.env.DEV || !e.data.draft,
+);
 
 /** '2016.03 – 2024.02' → 201603. 정렬에만 쓰는 값이라 못 읽으면 맨 뒤로 보낸다. */
 const startKey = (period?: string) => {
@@ -44,6 +50,22 @@ const isEmpty = timeline.length === 0 && certifications.length === 0;
 
       <h1 class="top__title">About</h1>
       {intro && <p class="top__intro rise" style="--delay:60ms">{intro}</p>}
+
+      {hasResume && (
+        <a class="btn btn--primary top__cta rise" style="--delay:120ms" href="/resume/">
+          경력기술서 보기
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+            <path
+              d="M3 8h9.5M9 4.5L12.5 8 9 11.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      )}
     </div>
   </section>
 
@@ -164,6 +186,7 @@ const isEmpty = timeline.length === 0 && certifications.length === 0;
     max-width: 56ch;
     word-break: keep-all;
   }
+  .top__cta { margin-top: var(--s5); }
 
   .page { padding-bottom: var(--s12); }
   .block + .block { margin-top: var(--s12); }
