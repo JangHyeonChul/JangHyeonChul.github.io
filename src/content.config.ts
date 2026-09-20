@@ -11,7 +11,7 @@ const projects = defineCollection({
     title: z.string(),
     /** 카드에 보이는 한 줄 설명 */
     summary: z.string(),
-    /** 카드를 호버하면 펼쳐지는 자세한 설명. 없으면 summary 를 씁니다. */
+    /** 호버하면 summary 아래에 덧붙는 자세한 설명. 빈 줄로 문단을 나눕니다. */
     detail: z.string().optional(),
     /** 기술 스택 칩 */
     stack: z.array(z.string()).default([]),

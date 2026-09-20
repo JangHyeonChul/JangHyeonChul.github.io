@@ -1,0 +1,334 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site.config';
+import { about } from '../about.config';
+
+const { intro, education, career, certifications } = about;
+
+/** '2016.03 – 2024.02' → 201603. 정렬에만 쓰는 값이라 못 읽으면 맨 뒤로 보낸다. */
+const startKey = (period?: string) => {
+  const m = (period ?? '').match(/(\d{4})\.(\d{2})/);
+  return m ? Number(m[1]) * 100 + Number(m[2]) : 0;
+};
+
+// 학력과 경력을 한 줄기로 합쳐 최근 것부터 세운다.
+const timeline = [
+  ...education.map((e) => ({
+    kind: 'edu' as const,
+    title: e.school,
+    sub: e.degree,
+    period: e.period,
+    note: e.note,
+  })),
+  ...career.map((c) => ({
+    kind: 'job' as const,
+    title: c.role,
+    sub: c.company,
+    period: c.period,
+    note: c.note,
+  })),
+].sort((a, b) => startKey(b.period) - startKey(a.period));
+
+const KIND_LABEL = { edu: '학력', job: '경력' } as const;
+const isEmpty = timeline.length === 0 && certifications.length === 0;
+---
+
+<BaseLayout title="About" description={`${site.name}의 학력, 경력, 자격증.`}>
+  <section class="top">
+    <div class="wrap">
+      <nav class="crumb" aria-label="경로">
+        <a href="/">프로젝트</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">About</span>
+      </nav>
+
+      <h1 class="top__title">About</h1>
+      {intro && <p class="top__intro rise" style="--delay:60ms">{intro}</p>}
+    </div>
+  </section>
+
+  <div class="wrap page">
+    {isEmpty ? (
+      <div class="empty">
+        <p class="empty__line">아직 등록된 내용이 없습니다.</p>
+        <p class="caption">
+          <code>src/about.config.ts</code> 에 항목을 추가하면 이 자리에 나타납니다.
+        </p>
+      </div>
+    ) : (
+      <>
+        {timeline.length > 0 && (
+          <section class="block">
+            <div class="block__head">
+              <h2 class="section-title">학력 · 경력</h2>
+              <span class="caption">최근순</span>
+            </div>
+
+            <ol class="tl">
+              {timeline.map((t, i) => (
+                <li
+                  class:list={['tl__item', 'rise', t.kind === 'edu' && 'tl__item--edu']}
+                  style={`--delay:${i * 60}ms`}
+                >
+                  <div class="tl__head">
+                    {t.period && <span class="tl__when">{t.period}</span>}
+                    <span class="tl__kind">{KIND_LABEL[t.kind]}</span>
+                  </div>
+
+                  <p class="tl__title">{t.title}</p>
+
+                  <div class="tl__foot">
+                    {t.sub && <span class="tl__sub">{t.sub}</span>}
+                    {t.note && <span class="chip">{t.note}</span>}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {certifications.length > 0 && (
+          <section class="block">
+            <div class="block__head">
+              <h2 class="section-title">자격증</h2>
+              <span class="caption">{certifications.length}개</span>
+            </div>
+
+            <ul class="certs">
+              {certifications.map((c, i) => {
+                const meta = [c.issuer, c.date, c.note].filter(Boolean).join(' · ');
+                return (
+                  <li class="cert rise" style={`--delay:${i * 60}ms`}>
+                    <span class="cert__seal" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="20" height="20">
+                        <circle cx="12" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.7" />
+                        <path
+                          d="M8.4 13.4L7 21l5-2.4L17 21l-1.4-7.6"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+
+                    <span class="cert__text">
+                      <span class="cert__name">{c.name}</span>
+                      {meta && <span class="cert__meta caption">{meta}</span>}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+      </>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  /* 프로젝트 상세와 같은 틴트 밴드 — 사이트 안에서 같은 층으로 읽히게 */
+  .top {
+    background: var(--brand-tint);
+    border-bottom: 1px solid var(--hairline);
+    padding-block: var(--s5) var(--s8);
+    margin-bottom: var(--s12);
+  }
+  .crumb {
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    font-size: 13px;
+    color: var(--faint);
+    margin-bottom: var(--s6);
+  }
+  .crumb a { color: var(--muted); }
+  .crumb a:hover { color: var(--brand-bright); }
+  .crumb [aria-current] { color: var(--ink-soft); }
+
+  .top__title {
+    animation: titleIn var(--t-slow) var(--e-enter) both;
+    animation-delay: 60ms;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.8px;
+    color: var(--ink);
+  }
+  .top__intro {
+    margin-top: var(--s4);
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 56ch;
+    word-break: keep-all;
+  }
+
+  .page { padding-bottom: var(--s12); }
+  .block + .block { margin-top: var(--s12); }
+  .block__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s3);
+    margin-bottom: var(--s6);
+  }
+
+  /* ── 연대기 ────────────────────────────────────────────
+     연대 그래프를 세로로 세운 형태. 줄기 위에 도넛 마커가
+     놓이고, 기간이 그래프의 연도처럼 가장 먼저 읽힌다.     */
+  .tl {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 34px;
+  }
+  .tl::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--brand) 45%, transparent);
+  }
+
+  .tl__item {
+    position: relative;
+    padding-bottom: var(--s8);
+  }
+  .tl__item:last-child { padding-bottom: 0; }
+
+  /* 바깥 링 — 캔버스색으로 채워 줄기를 끊어 놓는다 */
+  .tl__item::before {
+    content: '';
+    position: absolute;
+    left: -34px;
+    top: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--r-pill);
+    background: var(--canvas);
+    box-shadow:
+      inset 0 0 0 2px var(--brand),
+      0 0 0 4px var(--canvas);
+  }
+  /* 가운데 점 */
+  .tl__item::after {
+    content: '';
+    position: absolute;
+    left: -29px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--r-pill);
+    background: var(--brand);
+  }
+
+  .tl__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s2);
+    margin-bottom: var(--s1);
+  }
+  /* 그래프의 연도 자리 — 가장 먼저 읽혀야 한다 */
+  .tl__when {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .tl__kind {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--brand-bright);
+  }
+
+  .tl__title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--ink);
+    word-break: keep-all;
+  }
+  .tl__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s2);
+    margin-top: var(--s1);
+  }
+  .tl__sub { font-size: 14px; color: var(--muted); word-break: keep-all; }
+
+  /* ── 자격증 카드 ───────────────────────────────────────
+     내용만큼만 차지하는 작은 카드를 가로로 흘린다.
+     그림자를 얹어 연대기의 평평한 줄기와 층을 구분한다.    */
+  .certs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .cert {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s3);
+    padding: var(--s3) var(--s5) var(--s3) var(--s3);
+    border-radius: var(--r-ctl);
+    background: var(--surface);
+    box-shadow: var(--ring), var(--shadow-card);
+    transition:
+      transform var(--t-fast) var(--e-enter),
+      box-shadow var(--t-fast) var(--e-std);
+  }
+  .cert:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px var(--brand-tint-line), var(--shadow-card);
+  }
+
+  /* 메달 리본 — 틴트 타일 위에 얹어 카드의 시작점을 잡는다 */
+  .cert__seal {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: var(--r-ctl);
+    background: var(--brand-tint);
+    color: var(--brand-bright);
+  }
+
+  .cert__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .cert__name {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--ink);
+    word-break: keep-all;
+  }
+  .cert__meta { color: var(--muted); word-break: keep-all; }
+
+  .empty {
+    padding: var(--s12) var(--s5);
+    border-radius: var(--r-card);
+    box-shadow: var(--ring);
+    text-align: center;
+  }
+  .empty__line { color: var(--ink); margin-bottom: var(--s2); }
+  .empty code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 0.15em 0.4em;
+    border-radius: var(--r-chip);
+    background: var(--surface-2);
+    color: var(--brand-bright);
+  }
+</style>

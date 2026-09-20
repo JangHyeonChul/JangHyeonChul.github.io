@@ -6,6 +6,11 @@ const year = new Date().getFullYear();
 <footer class="ft">
   <div class="wrap ft__in">
     <p class="caption">© {year} {site.name}</p>
+    <nav class="ft__nav caption" aria-label="사이트">
+      <a href="/">프로젝트</a>
+      <span aria-hidden="true">·</span>
+      <a href="/about/">About</a>
+    </nav>
     <p class="caption">Built with Astro · Deployed on GitHub Pages</p>
   </div>
 </footer>
@@ -23,4 +28,7 @@ const year = new Date().getFullYear();
     gap: var(--s2);
     padding-block: var(--s6);
   }
+  .ft__nav { display: flex; align-items: center; gap: var(--s2); }
+  .ft__nav a { color: var(--muted); }
+  .ft__nav a:hover { color: var(--brand-bright); }
 </style>

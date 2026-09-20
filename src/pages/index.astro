@@ -60,13 +60,14 @@ const sheets = [
       <p class="hero__tag" style={`--d:${afterTag}ms`}>{site.tagline}</p>
 
       {/* 연락 카드 — 태그라인 다음 순서로 조용히 따라 들어온다 */}
-      <ul class="cards" aria-label="연락처">
+      <ul class="cards" aria-label="바로가기">
         {site.contacts.map((c, i) => {
           const external = c.href.startsWith('http');
+          const isPage = c.href.startsWith('/');   // 사이트 안쪽 — 다른 모양으로 세운다
           return (
-            <li class="cards__item" style={`--d:${afterTag + 80 + i * 70}ms`}>
+            <li class:list={['cards__item', isPage && 'cards__item--page']} style={`--d:${afterTag + 80 + i * 70}ms`}>
               <a
-                class="cards__link"
+                class:list={['cards__link', isPage && 'cards__link--page']}
                 href={c.href}
                 aria-label={`${c.label} — ${c.value}`}
                 title={c.value}
@@ -74,14 +75,25 @@ const sheets = [
               >
                 <span class="cards__label">{c.label}</span>
                 <svg class="cards__arrow" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                  <path
-                    d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
+                  {isPage ? (
+                    <path
+                      d="M3 8h9.5M9 4.5L12.5 8 9 11.5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  ) : (
+                    <path
+                      d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  )}
                 </svg>
               </a>
             </li>
@@ -262,6 +274,34 @@ const sheets = [
     line-height: 1;
     color: var(--ink-soft);
   }
+
+  /* ── 사이트 안쪽 카드 ──────────────────────────────────
+     About 은 바깥으로 나가는 링크가 아니라 이 사이트의 한 페이지다.
+     틴트로 채우고 화살표를 → 로 바꿔 성격이 다름을 드러낸 뒤,
+     세로 헤어라인으로 바깥 링크 묶음과 갈라 놓는다.        */
+  .cards__link--page {
+    background: var(--brand-tint);
+    box-shadow: inset 0 0 0 1px var(--brand-tint-line);
+  }
+  .cards__link--page:hover {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--brand-tint-line), var(--shadow-card);
+  }
+  .cards__link--page .cards__label,
+  .cards__link--page .cards__arrow { color: var(--brand-bright); }
+  .cards__link--page:hover .cards__arrow { transform: translateX(2px); }
+
+  .cards__item--page { position: relative; margin-right: var(--s4); }
+  .cards__item--page::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -12px;
+    width: 1px;
+    height: 16px;
+    transform: translateY(-50%);
+    background: var(--divider);
+  }
   .cards__arrow {
     color: var(--placeholder);
     transition:
@@ -292,6 +332,9 @@ const sheets = [
     .hero { padding-block: var(--s8); margin-bottom: var(--s8); }
     .cards { margin-top: var(--s4); }
     .cards__item { flex: 1 1 100%; }
+    /* 한 줄에 하나씩 쌓이면 세로 구분선이 의미를 잃는다 */
+    .cards__item--page { margin-right: 0; }
+    .cards__item--page::after { display: none; }
   }
 
   .empty {
