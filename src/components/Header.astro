@@ -13,27 +13,20 @@ const onHome = path === '/';
       <span class="hd__name">{site.name}</span>
     </a>
 
-    <div class="hd__right">
-      <nav class="hd__nav" aria-label="주요">
-        {site.links.map((l) => (
-          <a class="hd__link" href={l.href} rel="noopener noreferrer" target="_blank">{l.label}</a>
-        ))}
-      </nav>
-      <span class="hd__sep" aria-hidden="true"></span>
-      <ThemeToggle />
-    </div>
+    {/* 링크는 히어로의 연락 카드가 담당한다. 여기는 테마 토글만. */}
+    <ThemeToggle />
   </div>
 </header>
 
 <style>
-  /* HDS Navigation: 15px, weight 400 (active 600), ink-soft */
+  /* HDS Navigation: 헤어라인으로만 분리하고, 내용은 최소로 */
   .hd {
     position: sticky;
     top: 0;
     z-index: 50;
     background: var(--header-bg);
     backdrop-filter: saturate(140%) blur(10px);
-    border-bottom: 1px solid var(--hairline);  /* HDS: 헤어라인으로 분리 */
+    border-bottom: 1px solid var(--hairline);
   }
   .hd__in {
     display: flex;
@@ -56,30 +49,5 @@ const onHome = path === '/';
     height: 10px;
     border-radius: var(--r-pill);
     background: var(--brand);
-  }
-
-  .hd__right { display: flex; align-items: center; gap: var(--s1); }
-  .hd__nav { display: flex; align-items: center; gap: var(--s1); }
-  .hd__link {
-    padding: 0 var(--s3);
-    height: 36px;
-    display: inline-flex;
-    align-items: center;
-    border-radius: var(--r-ctl);
-    font-size: 15px;
-    font-weight: 400;
-    color: var(--muted);
-  }
-  .hd__link:hover { color: var(--ink-soft); background: var(--surface); }
-
-  .hd__sep {
-    width: 1px;
-    height: 18px;
-    margin-inline: var(--s2);
-    background: var(--hairline);
-  }
-  @media (max-width: 480px) {
-    .hd__sep { margin-inline: var(--s1); }
-    .hd__link { padding: 0 var(--s2); }
   }
 </style>
