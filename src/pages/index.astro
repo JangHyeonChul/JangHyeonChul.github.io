@@ -12,11 +12,37 @@ const nameChars = [...site.name];
 const STEP = 34;    // 글자 간 간격(ms)
 const LEAD = 140;   // 첫 글자가 시작하기까지(ms)
 const afterName = LEAD + nameChars.length * STEP;
+const afterTag = afterName + 90;
+
+// 히어로 배경 장식 — 한 장의 좌표를 재사용해 문서 세 장을 겹친다.
+const sheets = [
+  { x: 20,  y: 74, r: -9, o: 0.5  },
+  { x: 148, y: 40, r: 4,  o: 0.75 },
+  { x: 256, y: 88, r: -6, o: 1    },
+];
 ---
 
 <BaseLayout>
   <section class="hero">
-    <div class="wrap">
+    {/* 배경 장식 — 기록이 쌓인 문서. 내용을 전달하지 않으므로 보조기술에서 제외 */}
+    <div class="deco" aria-hidden="true">
+      <svg class="deco__svg" viewBox="0 0 470 390" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {sheets.map((s) => (
+          <g transform={`translate(${s.x} ${s.y}) rotate(${s.r})`} opacity={s.o}>
+            <rect class="deco__page" width="180" height="240" rx="12" />
+            <rect class="deco__accent" x="22" y="26" width="74" height="9" rx="4.5" />
+            <rect class="deco__line" x="22" y="52" width="136" height="6" rx="3" />
+            <rect class="deco__line" x="22" y="68" width="118" height="6" rx="3" />
+            <rect class="deco__line" x="22" y="84" width="102" height="6" rx="3" />
+            <rect class="deco__block" x="22" y="108" width="136" height="52" rx="8" />
+            <rect class="deco__line" x="22" y="176" width="122" height="6" rx="3" />
+            <rect class="deco__line" x="22" y="192" width="88" height="6" rx="3" />
+          </g>
+        ))}
+      </svg>
+    </div>
+
+    <div class="wrap hero__in">
       <p class="hero__role">{site.role}</p>
 
       <h1 class="hero__name" aria-label={site.name}>
@@ -25,13 +51,43 @@ const afterName = LEAD + nameChars.length * STEP;
             class="hero__char"
             style={`--d:${LEAD + i * STEP}ms`}
             aria-hidden="true"
-          >{ch === ' ' ? '\u00A0' : ch}</span>
+          >{ch === ' ' ? ' ' : ch}</span>
         ))}
       </h1>
 
       <span class="hero__rule" style={`--d:${afterName}ms`} aria-hidden="true"></span>
 
-      <p class="hero__tag" style={`--d:${afterName + 90}ms`}>{site.tagline}</p>
+      <p class="hero__tag" style={`--d:${afterTag}ms`}>{site.tagline}</p>
+
+      {/* 연락 카드 — 태그라인 다음 순서로 조용히 따라 들어온다 */}
+      <ul class="cards" aria-label="연락처">
+        {site.contacts.map((c, i) => {
+          const external = c.href.startsWith('http');
+          return (
+            <li class="cards__item" style={`--d:${afterTag + 80 + i * 70}ms`}>
+              <a
+                class="cards__link"
+                href={c.href}
+                aria-label={`${c.label} — ${c.value}`}
+                title={c.value}
+                {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                <span class="cards__label">{c.label}</span>
+                <svg class="cards__arrow" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                  <path
+                    d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   </section>
 
@@ -62,14 +118,56 @@ const afterName = LEAD + nameChars.length * STEP;
 <style>
   /* 히어로는 브랜드 틴트 밴드 — HDS 의 #eefbfb 섹션에 대응 */
   .hero {
+    position: relative;
+    overflow: hidden;
     background: var(--brand-tint);
     border-bottom: 1px solid var(--hairline);
-    padding-block: var(--s12);
+    padding-block: var(--s8);
     margin-bottom: var(--s12);
   }
+  .hero__in { position: relative; z-index: 1; }
+
+  /* ── 배경 장식 ─────────────────────────────────────────
+     기울어진 문서 세 장. 브랜드 딥 틸을 아주 낮은 알파로만
+     써서 틴트 밴드의 색 위계를 넘지 않는다.
+     본문 쪽(왼쪽)으로 갈수록 마스크로 사라진다.            */
+  .deco {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    z-index: 0;
+    width: 560px;
+    transform: translateY(-50%) rotate(-7deg);
+    opacity: 0.62;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to left, #000 58%, transparent 100%);
+    mask-image: linear-gradient(to left, #000 58%, transparent 100%);
+    animation: rise var(--t-slow) var(--e-enter) both;
+    animation-delay: 220ms;
+  }
+  .deco__svg { width: 100%; height: auto; }
+
+  .deco__page {
+    fill: color-mix(in srgb, var(--surface) 78%, transparent);
+    stroke: color-mix(in srgb, var(--brand-deep) 26%, transparent);
+    stroke-width: 1.5;
+  }
+  .deco__accent { fill: color-mix(in srgb, var(--brand-deep) 42%, transparent); }
+  .deco__line   { fill: color-mix(in srgb, var(--brand-deep) 20%, transparent); }
+  .deco__block  { fill: color-mix(in srgb, var(--brand-deep) 11%, transparent); }
+
+  /* 다크에서는 표면이 어두워 같은 알파가 더 세게 읽힌다 */
+  :global(:root[data-theme="dark"]) .deco { opacity: 0.46; }
+
+  /* 폭이 줄면 태그라인과 겹치기 시작한다 — 바깥으로 물리고 크기를 줄인다 */
+  @media (max-width: 1200px) {
+    .deco { right: -48px; width: 470px; }
+  }
+  /* 텍스트와 겹치기 시작하는 폭부터는 감춘다 */
+  @media (max-width: 900px) { .deco { display: none; } }
 
   /* ── 등장 시퀀스 ───────────────────────────────────────
-     역할 라벨 → 이름(글자 단위) → 브랜드 룰 → 태그라인.
+     역할 라벨 → 이름(글자 단위) → 브랜드 룰 → 태그라인 → 연락 카드.
      각 요소의 지속시간은 HDS 모션 토큰을 벗어나지 않고,
      스태거로만 리듬을 만든다. 바운스·스프링 없음.         */
 
@@ -104,7 +202,7 @@ const afterName = LEAD + nameChars.length * STEP;
     display: block;
     width: 56px;
     height: 2px;
-    margin-block: var(--s4) var(--s4);
+    margin-block: var(--s3) var(--s3);
     background: var(--brand);
     border-radius: var(--r-pill);
     transform-origin: left center;
@@ -124,6 +222,57 @@ const afterName = LEAD + nameChars.length * STEP;
   /* 애니메이션이 끝나면 힌트를 거둔다 */
   .hero__name:hover .hero__char { will-change: auto; }
 
+  /* ── 연락 카드 ─────────────────────────────────────────
+     이름만 한 줄. 주소는 title/aria-label 로만 남겨
+     히어로에서 시선을 가져가지 않게 한다.                  */
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2);
+    list-style: none;
+    margin: var(--s4) 0 0;
+    padding: 0;
+  }
+  .cards__item {
+    animation: rise var(--t-std) var(--e-enter) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .cards__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    height: 34px;
+    padding: 0 var(--s3);
+    border-radius: var(--r-ctl);
+    background: var(--surface);
+    box-shadow: var(--ring);
+    transition:
+      transform var(--t-fast) var(--e-enter),
+      background var(--t-fast) var(--e-std),
+      box-shadow var(--t-fast) var(--e-std);
+  }
+  .cards__link:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px var(--brand-tint-line), var(--shadow-card);
+  }
+
+  .cards__label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink-soft);
+  }
+  .cards__arrow {
+    color: var(--placeholder);
+    transition:
+      transform var(--t-fast) var(--e-std),
+      color var(--t-fast) var(--e-std);
+  }
+  .cards__link:hover .cards__arrow {
+    color: var(--brand-bright);
+    transform: translate(2px, -2px);
+  }
+
   .works__head {
     display: flex;
     align-items: baseline;
@@ -141,6 +290,8 @@ const afterName = LEAD + nameChars.length * STEP;
   @media (max-width: 640px) {
     .grid { grid-template-columns: 1fr; gap: var(--s4); }
     .hero { padding-block: var(--s8); margin-bottom: var(--s8); }
+    .cards { margin-top: var(--s4); }
+    .cards__item { flex: 1 1 100%; }
   }
 
   .empty {
