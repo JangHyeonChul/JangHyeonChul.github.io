@@ -17,7 +17,7 @@ const { title, summary, stack, period, cover, gallery, repo, demo } = project.da
 
 // 상단 화면. gallery 가 있으면 돌리고, 없으면 cover 한 장만 세운다.
 const shots = gallery.length > 0 ? gallery : cover ? [cover] : [];
-const ROTATE_MS = 3500;
+const ROTATE_MS = 1500;
 
 const chapters = await getChapters(project.id);
 const { grouped, groups } = groupChapters(chapters);
