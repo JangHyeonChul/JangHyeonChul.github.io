@@ -1,5 +1,4 @@
 ---
-import { site } from '../site.config';
 import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
@@ -8,12 +7,25 @@ const onHome = path === '/';
 
 <header class="hd">
   <div class="wrap hd__in">
-    <a class="hd__brand" href="/" aria-current={onHome ? 'page' : undefined}>
-      <span class="hd__mark" aria-hidden="true"></span>
-      <span class="hd__name">{site.name}</span>
+    <a
+      class="hd__home"
+      href="/"
+      aria-label="홈"
+      aria-current={onHome ? 'page' : undefined}
+    >
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+        <path
+          d="M3 8.6 10 3l7 5.6M5.2 9.9v6.3a.8.8 0 0 0 .8.8h8a.8.8 0 0 0 .8-.8V9.9"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
     </a>
 
-    {/* 링크는 히어로의 연락 카드가 담당한다. 여기는 테마 토글만. */}
+    {/* 링크는 히어로의 바로가기 카드가 담당한다. 여기는 테마 토글만. */}
     <ThemeToggle />
   </div>
 </header>
@@ -35,19 +47,22 @@ const onHome = path === '/';
     gap: var(--s4);
     height: 60px;
   }
-  .hd__brand {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s2);
-    font-size: 15px;
-    font-weight: 600;
+
+  /* 이름 대신 집 한 채. 현재 위치가 홈이면 브랜드색으로 켜 둔다 */
+  .hd__home {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-ctl);
+    color: var(--muted);
+    transition:
+      color var(--t-fast) var(--e-std),
+      background var(--t-fast) var(--e-std);
+  }
+  .hd__home:hover {
     color: var(--ink-soft);
+    background: var(--surface);
   }
-  /* 브랜드 마크 — 터콰이즈는 아이덴티티에만, 장식으로 퍼뜨리지 않는다 */
-  .hd__mark {
-    width: 10px;
-    height: 10px;
-    border-radius: var(--r-pill);
-    background: var(--brand);
-  }
+  .hd__home[aria-current='page'] { color: var(--brand-bright); }
 </style>
