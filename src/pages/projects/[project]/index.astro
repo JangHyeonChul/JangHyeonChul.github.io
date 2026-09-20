@@ -13,7 +13,11 @@ export async function getStaticPaths() {
 }
 
 const { project } = Astro.props;
-const { title, summary, stack, period, cover, repo, demo } = project.data;
+const { title, summary, stack, period, cover, gallery, repo, demo } = project.data;
+
+// 상단 화면. gallery 가 있으면 돌리고, 없으면 cover 한 장만 세운다.
+const shots = gallery.length > 0 ? gallery : cover ? [cover] : [];
+const ROTATE_MS = 3500;
 
 const chapters = await getChapters(project.id);
 const { grouped, groups } = groupChapters(chapters);
@@ -64,9 +68,35 @@ const numbered = groups.map((g) => {
           )}
         </div>
 
-        {cover && (
-          <div class="top__cover rise" style="--delay:80ms">
-            <img src={cover} alt="" width="800" height="450" decoding="async" />
+        {shots.length > 0 && (
+          <div class="shot rise" style="--delay:80ms" data-shot data-interval={ROTATE_MS}>
+            <div class="shot__frame">
+              {shots.map((src, i) => (
+                <img
+                  class:list={['shot__img', i === 0 && 'is-on']}
+                  src={src}
+                  alt=""
+                  width="800"
+                  height="450"
+                  decoding="async"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              ))}
+            </div>
+
+            {shots.length > 1 && (
+              <div class="shot__dots" role="tablist" aria-label="화면 미리보기">
+                {shots.map((_, i) => (
+                  <button
+                    class:list={['shot__dot', i === 0 && 'is-on']}
+                    type="button"
+                    role="tab"
+                    aria-selected={i === 0 ? 'true' : 'false'}
+                    aria-label={`${i + 1}번째 화면`}
+                  ></button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -136,7 +166,7 @@ const numbered = groups.map((g) => {
     align-items: center;
   }
   @media (min-width: 900px) {
-    .top__grid:has(.top__cover) { grid-template-columns: 1fr 0.9fr; }
+    .top__grid:has(.shot) { grid-template-columns: 1fr 0.9fr; }
   }
 
   .top__text { display: flex; flex-direction: column; gap: var(--s4); align-items: flex-start; }
@@ -159,12 +189,45 @@ const numbered = groups.map((g) => {
   .top__stack { display: flex; flex-wrap: wrap; gap: var(--s1); list-style: none; margin: 0; padding: 0; }
   .top__links { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s1); }
 
-  .top__cover {
+  /* ── 상단 화면 로테이션 ────────────────────────────────
+     같은 자리에서 겹친 이미지의 불투명도만 바꾼다. 레이아웃은
+     건드리지 않으므로 전환 중에도 높이가 흔들리지 않는다.   */
+  .shot { display: flex; flex-direction: column; gap: var(--s3); }
+  .shot__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
     border-radius: var(--r-card);
     overflow: hidden;
+    background: var(--surface);
     box-shadow: var(--ring), var(--shadow-card);
   }
-  .top__cover img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+  .shot__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0;
+    transition: opacity var(--t-slow) var(--e-std);
+  }
+  .shot__img.is-on { opacity: 1; }
+
+  .shot__dots { display: flex; justify-content: center; gap: var(--s2); }
+  .shot__dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: var(--divider);
+    cursor: pointer;
+    transition:
+      width var(--t-std) var(--e-std),
+      background var(--t-std) var(--e-std);
+  }
+  .shot__dot:hover { background: var(--muted); }
+  .shot__dot.is-on { width: 18px; background: var(--brand); }
 
   .intro { margin-bottom: var(--s12); }
   .intro__card {
@@ -213,3 +276,49 @@ const numbered = groups.map((g) => {
     color: var(--brand-bright);
   }
 </style>
+
+<script>
+  // 상단 화면 로테이션. 호버하면 멈추고, 탭이 가려져 있으면 돌지 않는다.
+  document.querySelectorAll<HTMLElement>('[data-shot]').forEach((root) => {
+    const imgs = Array.from(root.querySelectorAll<HTMLElement>('.shot__img'));
+    const dots = Array.from(root.querySelectorAll<HTMLElement>('.shot__dot'));
+    if (imgs.length < 2) return;
+
+    const wait = Number(root.dataset.interval) || 3500;
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let at = 0;
+    let timer: number | undefined;
+
+    const show = (n: number) => {
+      at = (n + imgs.length) % imgs.length;
+      imgs.forEach((el, k) => el.classList.toggle('is-on', k === at));
+      dots.forEach((el, k) => {
+        el.classList.toggle('is-on', k === at);
+        el.setAttribute('aria-selected', String(k === at));
+      });
+    };
+
+    const stop = () => {
+      if (timer !== undefined) window.clearInterval(timer);
+      timer = undefined;
+    };
+    const start = () => {
+      stop();
+      if (calm.matches) return;          // 모션을 줄인 사용자에게는 자동 전환 없음
+      timer = window.setInterval(() => show(at + 1), wait);
+    };
+
+    dots.forEach((d, k) =>
+      d.addEventListener('click', () => {
+        show(k);
+        start();
+      }),
+    );
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+    start();
+  });
+</script>

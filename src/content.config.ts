@@ -19,6 +19,8 @@ const projects = defineCollection({
     period: z.string().optional(),
     /** public/ 기준 경로. 예: '/covers/my-app.png' — 없으면 플레이스홀더 */
     cover: z.string().optional(),
+    /** 상세 페이지 상단에서 돌아가는 스크린샷들. public/ 기준 경로 */
+    gallery: z.array(z.string()).default([]),
     repo: z.string().url().optional(),
     demo: z.string().url().optional(),
     /** 카드 정렬 순서 (작을수록 앞) */
