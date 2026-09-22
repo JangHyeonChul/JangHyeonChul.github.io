@@ -1,8 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
 import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
 const onHome = path === '/';
+const onResume = path.startsWith('/resume');
+
+// About의 버튼과 같은 기준: 경력기술서가 공개돼 있을 때만 링크를 세운다.
+const hasResume = (await getCollection('resume')).some(
+  (e) => import.meta.env.DEV || !e.data.draft,
+);
 ---
 
 <header class="hd">
@@ -21,8 +28,15 @@ const onHome = path === '/';
       <span class="hd__label">Home</span>
     </a>
 
-    {/* 링크는 히어로의 바로가기 카드가 담당한다. 여기는 테마 토글만. */}
-    <ThemeToggle />
+    {/* 나머지 링크는 히어로의 바로가기 카드가 담당한다. 헤더에는 경력기술서만. */}
+    <nav class="hd__nav" aria-label="주요 메뉴">
+      {hasResume && (
+        <a class="hd__link" href="/resume/" aria-current={onResume ? 'page' : undefined}>
+          경력기술서
+        </a>
+      )}
+      <ThemeToggle />
+    </nav>
   </div>
 </header>
 
@@ -65,6 +79,35 @@ const onHome = path === '/';
     background: var(--surface);
   }
   .hd__home[aria-current='page'] { color: var(--brand-bright); }
+
+  /* 오른쪽 묶음: 텍스트 링크 + 테마 토글 */
+  .hd__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--s1);
+  }
+
+  /* 홈 링크와 같은 톤. 아이콘 없이 글자만 */
+  .hd__link {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding-inline: var(--s3);
+    border-radius: var(--r-ctl);
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    line-height: 1;
+    transition:
+      color var(--t-fast) var(--e-std),
+      background var(--t-fast) var(--e-std);
+  }
+  .hd__link:hover {
+    color: var(--ink-soft);
+    background: var(--surface);
+  }
+  .hd__link[aria-current='page'] { color: var(--brand-bright); }
 
   /* HDS Navigation: 15px. 아이콘과 같은 색을 따라간다 */
   .hd__label {
