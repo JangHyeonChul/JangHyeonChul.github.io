@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../site.config';
+import { about } from '../about.config';
 import { formatDate } from '../lib/content';
 
 // 여러 장이 있으면 가장 최근에 고친 것 한 장만 싣는다.
@@ -12,6 +13,11 @@ const docs = (await getCollection('resume'))
 
 const doc = docs[0];
 const Content = doc ? (await render(doc)).Content : null;
+
+// 상단 연락처: 사이트 바로가기 중 외부 링크만. 화면에는 주소를 그대로 보인다(인쇄물에서도 읽히도록).
+const contacts = site.contacts.filter((c) => !c.href.startsWith('/'));
+const role = about.career[0]?.role ?? site.role;
+const { education, certifications } = about;
 ---
 
 <BaseLayout
@@ -19,68 +25,90 @@ const Content = doc ? (await render(doc)).Content : null;
   description={doc?.data.summary ?? `${site.name}의 경력기술서.`}
   surface="blog"
 >
-  <article class="doc">
-    <header class="doc__head">
-      <div class="wrap wrap--prose">
-        <nav class="crumb no-print" aria-label="경로">
-          <a href="/">프로젝트</a>
-          <span aria-hidden="true">/</span>
-          <a href="/about/">About</a>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">경력기술서</span>
-        </nav>
+  <article class="wrap cv">
+    <div class="cv__bar no-print">
+      <nav class="crumb" aria-label="경로">
+        <a href="/">프로젝트</a>
+        <span aria-hidden="true">/</span>
+        <a href="/about/">About</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">경력기술서</span>
+      </nav>
 
-        <div class="doc__bar">
-          <div>
-            <h1 class="doc__title">{doc?.data.title ?? '경력기술서'}</h1>
-            {doc?.data.summary && <p class="doc__summary">{doc.data.summary}</p>}
-          </div>
-
-          {doc && (
-            <button class="btn btn--ghost no-print" type="button" data-print>
-              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-                <path
-                  d="M4.5 6V2.5h7V6M4.5 12H3.5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-1M4.5 10h7v3.5h-7z"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              PDF 로 저장
-            </button>
-          )}
+      {doc && (
+        <div class="cv__tools">
+          <span class="caption">최종 수정 {formatDate(doc.data.updated)}</span>
+          <button class="btn btn--ghost" type="button" data-print>
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <path
+                d="M4.5 6V2.5h7V6M4.5 12H3.5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-1M4.5 10h7v3.5h-7z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            PDF 로 저장
+          </button>
         </div>
+      )}
+    </div>
 
-        {doc && (
-          <p class="doc__meta caption">
-            <span class="print-only">{site.name}</span>
-            최종 수정 {formatDate(doc.data.updated)}
-          </p>
-        )}
+    <header class="cv__head">
+      <div>
+        <h1 class="cv__name">{site.name}</h1>
+        <p class="cv__role">{role}</p>
       </div>
+
+      {contacts.length > 0 && (
+        <dl class="cv__contacts">
+          {contacts.map((c) => (
+            <div class="cv__contact">
+              <dt>{c.label}</dt>
+              <dd><a href={c.href}>{c.value}</a></dd>
+            </div>
+          ))}
+        </dl>
+      )}
     </header>
 
     {doc ? (
-      <div class="wrap wrap--prose">
-        <div class="prose"><Content /></div>
-      </div>
+      <div class="cv__body"><Content /></div>
     ) : (
-      <div class="wrap wrap--prose">
-        <div class="empty">
-          <p class="empty__line">아직 공개된 경력기술서가 없습니다.</p>
-          <p class="caption">
-            <code>src/content/resume/</code> 의 <code>.md</code> 에서 <code>draft: true</code> 를
-            지우면 이 자리에 실립니다.
-          </p>
-        </div>
+      <div class="empty">
+        <p class="empty__line">아직 공개된 경력기술서가 없습니다.</p>
+        <p class="caption">
+          <code>src/content/resume/</code> 의 <code>.md</code> 에서 <code>draft: true</code> 를
+          지우면 이 자리에 실립니다.
+        </p>
       </div>
     )}
 
-    <div class="wrap wrap--prose doc__back no-print">
-      <a class="btn btn--ghost" href="/about/">← About 으로</a>
-    </div>
+    {(education.length > 0 || certifications.length > 0) && (
+      <div class="cv__foot">
+        {education.length > 0 && (
+          <section>
+            <h2 class="cv__sec">학력</h2>
+            <ul class="cv__list">
+              {education.map((e) => (
+                <li>{[e.school, e.degree, e.period, e.note].filter(Boolean).join(' | ')}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {certifications.length > 0 && (
+          <section>
+            <h2 class="cv__sec">자격</h2>
+            <ul class="cv__list">
+              {certifications.map((c) => (
+                <li>{[c.name, c.issuer, c.date].filter(Boolean).join(' | ')}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    )}
   </article>
 </BaseLayout>
 
@@ -89,12 +117,16 @@ const Content = doc ? (await render(doc)).Content : null;
 </script>
 
 <style>
-  .wrap--prose { max-width: var(--maxw-prose); }
+  .cv { padding-block: var(--s5) var(--s12); }
 
-  .doc__head {
-    padding-block: var(--s5) var(--s8);
+  /* ── 상단 도구줄 ─────────────────────────────── */
+  .cv__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s3);
     margin-bottom: var(--s8);
-    border-bottom: 1px solid var(--hairline);
   }
   .crumb {
     display: flex;
@@ -102,39 +134,159 @@ const Content = doc ? (await render(doc)).Content : null;
     gap: var(--s2);
     font-size: 13px;
     color: var(--faint);
-    margin-bottom: var(--s6);
   }
   .crumb a { color: var(--muted); }
   .crumb a:hover { color: var(--brand-bright); }
   .crumb [aria-current] { color: var(--ink-soft); }
+  .cv__tools { display: flex; align-items: center; gap: var(--s4); }
 
-  .doc__bar {
+  /* ── 이름 + 연락처: 굵은 선 한 줄로 본문과 가른다 ── */
+  .cv__head {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
-    gap: var(--s4);
+    gap: var(--s6);
+    padding-bottom: var(--s6);
+    border-bottom: 2px solid var(--ink-soft);
   }
-  .doc__title {
+  .cv__name {
     animation: titleIn var(--t-slow) var(--e-enter) both;
-    font-size: clamp(26px, 4.5vw, 36px);
+    font-size: clamp(32px, 5vw, 44px);
     font-weight: 700;
-    line-height: 1.3;
-    letter-spacing: -0.6px;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
     color: var(--ink);
   }
-  .doc__summary {
-    margin-top: var(--s2);
-    font-size: 16px;
-    color: var(--muted);
+  .cv__role {
+    margin-top: var(--s3);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body);
+  }
+  .cv__contacts {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: var(--s12);
+    row-gap: var(--s2);
+    font-size: 14px;
+  }
+  .cv__contact { display: contents; }
+  .cv__contact dt {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--faint);
+    align-self: center;
+  }
+  .cv__contact dd { text-align: right; color: var(--body); }
+  .cv__contact a:hover { color: var(--brand-bright); }
+
+  /* ── 섹션 제목: 제목 뒤로 가는 헤어라인 ────────── */
+  .cv__sec,
+  .cv__body :global(h2) {
+    display: flex;
+    align-items: center;
+    gap: var(--s6);
+    margin: var(--s12) 0 var(--s5);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .cv__sec::after,
+  .cv__body :global(h2)::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--hairline);
+  }
+
+  /* ── 본문 ──────────────────────────────────── */
+  .cv__body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--body);
     word-break: keep-all;
   }
-  .doc__meta { margin-top: var(--s4); display: flex; gap: var(--s2); }
+  .cv__body :global(p) { margin: 0 0 var(--s3); }
+  .cv__body :global(a) { color: var(--brand-bright); }
+  .cv__body :global(strong) { color: var(--ink-soft); }
 
-  /* 인쇄물에만 나오는 이름 — 화면에서는 헤더가 그 역할을 한다 */
-  .print-only { display: none; }
+  /* 회사 · 프로젝트 제목. <small>은 오른쪽 끝 기간 */
+  .cv__body :global(h3),
+  .cv__body :global(h4) {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .cv__body :global(h3) { margin: var(--s6) 0 var(--s2); font-size: 20px; font-weight: 700; }
+  .cv__body :global(h4) { margin: var(--s8) 0 var(--s1); font-size: 18px; font-weight: 700; }
+  .cv__body :global(h3 small),
+  .cv__body :global(h4 small) {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: var(--faint);
+  }
+  /* 프로젝트 제목 바로 아래 한 줄: 역할 · 기술 */
+  .cv__body :global(h4 + p) {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: var(--s3);
+  }
 
-  .doc__back { margin-top: var(--s12); }
+  /* 대시 불릿, 두 번째 줄부터는 글머리 뒤로 들여쓴다 */
+  .cv__body :global(ul),
+  .cv__list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--s3);
+  }
+  .cv__body :global(li) {
+    position: relative;
+    padding-left: 1.1em;
+    margin-bottom: var(--s1);
+  }
+  .cv__body :global(li)::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--faint);
+  }
+
+  /* 핵심 역량: 표를 2열 카드 격자로 편다. 머리행은 숨긴다 */
+  .cv__body :global(table) { display: block; width: 100%; }
+  .cv__body :global(thead) { display: none; }
+  .cv__body :global(tbody) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s5) var(--s12);
+  }
+  .cv__body :global(tr) { display: block; }
+  .cv__body :global(td) { display: block; padding: 0; border: 0; background: none; }
+  .cv__body :global(td:first-child) {
+    margin-bottom: var(--s1);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .cv__body :global(td:last-child) { font-size: 14px; color: var(--muted); }
+
+  /* ── 하단: 학력 | 자격 두 칸 ───────────────── */
+  .cv__foot {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 var(--s12);
+  }
+  .cv__list { font-size: 15px; line-height: 1.75; color: var(--body); }
+  .cv__list li { margin-bottom: var(--s2); }
 
   .empty {
     padding: var(--s12) var(--s5);
@@ -152,10 +304,21 @@ const Content = doc ? (await render(doc)).Content : null;
     color: var(--brand-bright);
   }
 
+  @media (max-width: 640px) {
+    .cv__contacts { column-gap: var(--s5); }
+    .cv__contact dd { text-align: left; }
+    .cv__body :global(tbody),
+    .cv__foot { grid-template-columns: 1fr; }
+    .cv__body :global(h3),
+    .cv__body :global(h4) { flex-wrap: wrap; row-gap: 0; }
+  }
+
   @media print {
-    .doc__head { padding-top: 0; margin-bottom: var(--s6); }
-    .doc__title { animation: none; }
-    .print-only { display: inline; }
-    .print-only::after { content: ' ·'; }
+    .cv { padding-top: 0; }
+    .cv__name { animation: none; }
+    .cv__sec,
+    .cv__body :global(h2) { margin-top: var(--s8); }
+    .cv__body :global(h3),
+    .cv__body :global(h4) { break-after: avoid; }
   }
 </style>
