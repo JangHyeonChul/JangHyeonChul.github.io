@@ -43,6 +43,8 @@ const hasResume = (await getCollection('resume')).some(
 <style>
   /* HDS Navigation: 헤어라인으로만 분리하고, 내용은 최소로 */
   .hd {
+    /* 페이지를 넘겨도 헤더는 제자리에 둔다 */
+    view-transition-name: site-header;
     position: sticky;
     top: 0;
     z-index: 50;

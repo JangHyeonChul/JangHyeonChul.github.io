@@ -2,51 +2,41 @@
 title: 경력기술서
 summary: 어떤 문제를 맡았고, 무엇을 선택했고, 무엇이 달라졌는지.
 updated: 2026-09-22
+
+# 핵심 역량 — 묶음 하나가 카드 한 장, 항목 하나가 작은 칩 하나로 그려집니다.
+skills:
+  - label: 실무에서 쓴 것
+    items: [Java, Spring Boot, MySQL, AWS, Docker]
+  - label: 데이터
+    items: [Hadoop, Hive, Spark, Python]
+  - label: 학습 중
+    items: [AI Agent 활용 자동화, 지식베이스 구축]
+
+# 경력 — 프로젝트 하나가 가로로 긴 카드 한 장. period 는 비워 두면 표시되지 않습니다.
+career:
+  - company: 회사명
+    role: BackEnd Developer
+    period: 2023.09 – 재직 중
+    note: "담당 도메인과 팀 구성을 한 줄로. (예: 5인 백엔드 팀에서 주문·정산 도메인 담당)"
+    projects:
+      - name: 에러 모니터링 서버 신규 구축
+        stack: [Java, Spring Boot, Slack API]
+        points:
+          - 로그 수집 도구를 사내 공통 모듈로 배포해 코드 수정 없이 전 서비스의 에러를 자동 수집
+          - 서버·단말·외부 연동 등 여러 곳의 에러를 한 곳으로 모으고, 발생 즉시 담당자에게 Slack 알림
+      - name: 프로젝트명
+        period: 2023.00 – 2024.00
+        stack: [Python, Spark, Hadoop]
+        points:
+          - 문제 —
+          - 한 일 —
+          - 결과 —
 ---
 
 <!--
-  작성 규칙
-  - 이름·연락처(상단)와 학력·자격(하단)은 site.config.ts / about.config.ts 에서 자동으로 채워집니다.
-  - 제목 오른쪽에 붙는 기간은 제목 끝에 <small>기간</small> 으로 적습니다.
-  - 프로젝트 제목 바로 다음 한 줄은 회색 보조 줄(역할 · 기술)로 표시됩니다.
+  이름·연락처(상단), 핵심 역량·경력(위 데이터), 학력·자격(about.config.ts)은 자동으로 그려집니다.
+  이 본문은 경력 아래에 그대로 이어 붙습니다.
 -->
-
-## 요약
-
-<!-- 세 줄. "무엇을 하는 개발자인지"가 먼저 읽히게. 예시 형태만 남겨둡니다. -->
-
-- 어떤 도메인에서 어떤 시스템을 맡고 있는지
-- 가장 자신 있는 영역 한 가지
-- 지금 파고 있는 방향
-
-## 핵심 역량
-
-| 구분 | 내용 |
-|---|---|
-| 실무에서 쓴 것 | Java, Spring Boot, MySQL, AWS, Docker |
-| 데이터 | Hadoop, Hive, Spark, Python |
-| 학습 중 | AI Agent 활용 자동화, 지식베이스 구축 |
-
-## 경력
-
-### 회사명 · BackEnd Developer <small>2023.09 – 재직 중</small>
-
-담당 도메인과 팀 구성을 한 줄로. (예: 5인 백엔드 팀에서 주문·정산 도메인 담당)
-
-#### 에러 모니터링 서버 신규 구축
-
-Tech | Java, Spring Boot, Slack API
-
-- 로그 수집 도구를 사내 공통 모듈로 배포해 코드 수정 없이 전 서비스의 에러를 자동 수집
-- 서버·단말·외부 연동 등 여러 곳의 에러를 한 곳으로 모으고, 발생 즉시 담당자에게 Slack 알림
-
-#### 프로젝트명 <small>2023.00 – 2024.00</small>
-
-Tech | Python, Spark, Hadoop
-
-- **문제** —
-- **한 일** —
-- **결과** —
 
 ## 개인 프로젝트
 

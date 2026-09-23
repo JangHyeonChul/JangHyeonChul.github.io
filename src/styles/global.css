@@ -263,6 +263,34 @@ a {
   to   { transform: scaleX(1); opacity: 1; }
 }
 
+/* ── Page transition ────────────────────────────────────
+   페이지 사이를 한 장처럼 잇는다(브라우저 기본 기능, JS 없음).
+   헤더(site-header)는 제자리, 민트 띠(band)는 크기만 바뀌고,
+   나머지 본문은 살짝 떠오르며 교차한다.
+   지원하지 않는 브라우저에서는 평소처럼 바로 넘어간다.       */
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) {
+  animation: vtOut var(--t-std) var(--e-exit) both;
+}
+::view-transition-new(root) {
+  animation: vtIn var(--t-slow) var(--e-enter) both;
+}
+@keyframes vtOut { to   { opacity: 0; transform: translateY(-6px); } }
+@keyframes vtIn  { from { opacity: 0; transform: translateY(10px); } }
+
+::view-transition-group(band) {
+  animation-duration: var(--t-slow);
+  animation-timing-function: var(--e-enter);
+}
+/* 띠 안의 글자가 늘어나지 않도록 원래 크기 그대로 교차시킨다 */
+::view-transition-old(band),
+::view-transition-new(band) {
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+}
+
 /* ── Print ──────────────────────────────────────────────
    경력기술서를 브라우저 인쇄로 PDF 뽑을 때의 규칙.
    테마와 무관하게 흰 종이 기준으로 강제하고, 화면 전용
@@ -338,4 +366,7 @@ a {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
 }

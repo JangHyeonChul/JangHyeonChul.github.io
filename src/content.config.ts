@@ -63,6 +63,32 @@ const resume = defineCollection({
     /** 최종 수정일. 여러 장이면 이 값이 큰 것이 실립니다. */
     updated: z.coerce.date(),
     draft: z.boolean().default(false),
+    /** 핵심 역량 — 묶음 하나가 카드 한 장, 항목 하나가 칩 하나 */
+    skills: z
+      .array(z.object({ label: z.string(), items: z.array(z.string()) }))
+      .default([]),
+    /** 경력 — 회사 하나에 프로젝트 카드 여러 장 */
+    career: z
+      .array(
+        z.object({
+          company: z.string(),
+          role: z.string().optional(),
+          period: z.string().optional(),
+          /** 담당 도메인·팀 구성 한 줄 */
+          note: z.string().optional(),
+          projects: z
+            .array(
+              z.object({
+                name: z.string(),
+                period: z.string().optional(),
+                stack: z.array(z.string()).default([]),
+                points: z.array(z.string()).default([]),
+              }),
+            )
+            .default([]),
+        }),
+      )
+      .default([]),
   }),
 });
 

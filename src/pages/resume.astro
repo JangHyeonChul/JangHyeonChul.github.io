@@ -13,6 +13,8 @@ const docs = (await getCollection('resume'))
 
 const doc = docs[0];
 const Content = doc ? (await render(doc)).Content : null;
+const skills = doc?.data.skills ?? [];
+const career = doc?.data.career ?? [];
 
 // 상단 연락처: 사이트 바로가기 중 외부 링크만. 화면에는 주소를 그대로 보인다(인쇄물에서도 읽히도록).
 const contacts = site.contacts.filter((c) => !c.href.startsWith('/'));
@@ -25,57 +27,60 @@ const { education, certifications } = about;
   description={doc?.data.summary ?? `${site.name}의 경력기술서.`}
   surface="blog"
 >
-  <article class="wrap cv">
-    <div class="cv__bar no-print">
-      <nav class="crumb" aria-label="경로">
-        <a href="/">프로젝트</a>
-        <span aria-hidden="true">/</span>
-        <a href="/about/">About</a>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page">경력기술서</span>
-      </nav>
+  {/* 메인 히어로와 같은 이름의 띠. 페이지를 넘길 때 히어로가 이 띠로 줄어든다 */}
+  <section class="band">
+    <div class="wrap">
+      <div class="band__bar no-print">
+        <nav class="crumb" aria-label="경로">
+          <a href="/">프로젝트</a>
+          <span aria-hidden="true">/</span>
+          <a href="/about/">About</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">경력기술서</span>
+        </nav>
 
-      {doc && (
-        <div class="cv__tools">
-          <span class="caption">최종 수정 {formatDate(doc.data.updated)}</span>
-          <button class="btn btn--ghost" type="button" data-print>
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-              <path
-                d="M4.5 6V2.5h7V6M4.5 12H3.5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-1M4.5 10h7v3.5h-7z"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            PDF 로 저장
-          </button>
-        </div>
-      )}
-    </div>
-
-    <header class="cv__head">
-      <div>
-        <h1 class="cv__name">{site.name}</h1>
-        <p class="cv__role">{role}</p>
+        {doc && (
+          <div class="band__tools">
+            <span class="caption">최종 수정 {formatDate(doc.data.updated)}</span>
+            <button class="btn btn--ghost" type="button" data-print>
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <path
+                  d="M4.5 6V2.5h7V6M4.5 12H3.5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-1M4.5 10h7v3.5h-7z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              PDF 로 저장
+            </button>
+          </div>
+        )}
       </div>
 
-      {contacts.length > 0 && (
-        <dl class="cv__contacts">
-          {contacts.map((c) => (
-            <div class="cv__contact">
-              <dt>{c.label}</dt>
-              <dd><a href={c.href}>{c.value}</a></dd>
-            </div>
-          ))}
-        </dl>
-      )}
-    </header>
+      <header class="band__head">
+        <div>
+          <h1 class="band__name">{site.name}</h1>
+          <p class="band__role">{role}</p>
+        </div>
 
-    {doc ? (
-      <div class="cv__body"><Content /></div>
-    ) : (
+        {contacts.length > 0 && (
+          <dl class="contacts">
+            {contacts.map((c) => (
+              <div class="contacts__row">
+                <dt>{c.label}</dt>
+                <dd><a href={c.href}>{c.value}</a></dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </header>
+    </div>
+  </section>
+
+  <article class="wrap cv">
+    {!doc && (
       <div class="empty">
         <p class="empty__line">아직 공개된 경력기술서가 없습니다.</p>
         <p class="caption">
@@ -85,12 +90,70 @@ const { education, certifications } = about;
       </div>
     )}
 
+    {skills.length > 0 && (
+      <section>
+        <h2 class="sec">핵심 역량</h2>
+        <ul class="skills">
+          {skills.map((s) => (
+            <li class="skill">
+              <p class="skill__label">{s.label}</p>
+              <ul class="chips">
+                {s.items.map((it) => <li class="chip">{it}</li>)}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {career.length > 0 && (
+      <section>
+        <h2 class="sec">경력</h2>
+        {career.map((c) => (
+          <div class="job">
+            <div class="job__head">
+              <h3 class="job__title">
+                {c.company}{c.role && <span class="job__role"> · {c.role}</span>}
+              </h3>
+              {c.period && <p class="period">{c.period}</p>}
+            </div>
+            {c.note && <p class="job__note">{c.note}</p>}
+
+            {c.projects.length > 0 && (
+              <ul class="projects">
+                {c.projects.map((p) => (
+                  <li class="proj">
+                    <div class="proj__head">
+                      <h4 class="proj__name">{p.name}</h4>
+                      {p.period && <p class="period">{p.period}</p>}
+                    </div>
+                    {p.stack.length > 0 && (
+                      <ul class="chips" aria-label="기술 스택">
+                        {p.stack.map((t) => <li class="chip">{t}</li>)}
+                      </ul>
+                    )}
+                    {p.points.length > 0 && (
+                      <ul class="points">
+                        {p.points.map((pt) => <li>{pt}</li>)}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </section>
+    )}
+
+    {Content && <div class="cv__body"><Content /></div>}
+
     {(education.length > 0 || certifications.length > 0) && (
-      <div class="cv__foot">
+      <div class="foot">
         {education.length > 0 && (
           <section>
-            <h2 class="cv__sec">학력</h2>
-            <ul class="cv__list">
+            <h2 class="sec">학력</h2>
+            <ul class="plain">
               {education.map((e) => (
                 <li>{[e.school, e.degree, e.period, e.note].filter(Boolean).join(' | ')}</li>
               ))}
@@ -99,8 +162,8 @@ const { education, certifications } = about;
         )}
         {certifications.length > 0 && (
           <section>
-            <h2 class="cv__sec">자격</h2>
-            <ul class="cv__list">
+            <h2 class="sec">자격</h2>
+            <ul class="plain">
               {certifications.map((c) => (
                 <li>{[c.name, c.issuer, c.date].filter(Boolean).join(' | ')}</li>
               ))}
@@ -117,16 +180,21 @@ const { education, certifications } = about;
 </script>
 
 <style>
-  .cv { padding-block: var(--s5) var(--s12); }
-
-  /* ── 상단 도구줄 ─────────────────────────────── */
-  .cv__bar {
+  /* ── 상단 띠: 메인 히어로의 민트를 캔버스 쪽으로 한 톤 눌러 구분한다 ── */
+  .band {
+    view-transition-name: band;
+    background: color-mix(in srgb, var(--brand) 6%, var(--canvas));
+    border-bottom: 1px solid var(--hairline);
+    padding-block: var(--s5) var(--s6);
+    margin-bottom: var(--s8);
+  }
+  .band__bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--s3);
-    margin-bottom: var(--s8);
+    margin-bottom: var(--s6);
   }
   .crumb {
     display: flex;
@@ -138,53 +206,54 @@ const { education, certifications } = about;
   .crumb a { color: var(--muted); }
   .crumb a:hover { color: var(--brand-bright); }
   .crumb [aria-current] { color: var(--ink-soft); }
-  .cv__tools { display: flex; align-items: center; gap: var(--s4); }
+  .band__tools { display: flex; align-items: center; gap: var(--s4); }
+  .band__tools .btn { background: var(--surface); }
 
-  /* ── 이름 + 연락처: 굵은 선 한 줄로 본문과 가른다 ── */
-  .cv__head {
+  .band__head {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: var(--s6);
-    padding-bottom: var(--s6);
-    border-bottom: 2px solid var(--ink-soft);
+    gap: var(--s5);
   }
-  .cv__name {
+  /* 메인 이름보다 한 단계 작게 */
+  .band__name {
     animation: titleIn var(--t-slow) var(--e-enter) both;
-    font-size: clamp(32px, 5vw, 44px);
+    font-size: clamp(28px, 4vw, 36px);
     font-weight: 700;
     line-height: 1.15;
-    letter-spacing: -0.8px;
+    letter-spacing: -0.7px;
     color: var(--ink);
   }
-  .cv__role {
-    margin-top: var(--s3);
-    font-size: 18px;
+  .band__role {
+    margin-top: var(--s2);
+    font-size: 16px;
     font-weight: 600;
-    color: var(--body);
+    color: var(--brand-bright);
   }
-  .cv__contacts {
+  .contacts {
     display: grid;
     grid-template-columns: auto auto;
-    column-gap: var(--s12);
-    row-gap: var(--s2);
+    column-gap: var(--s8);
+    row-gap: var(--s1);
     font-size: 14px;
   }
-  .cv__contact { display: contents; }
-  .cv__contact dt {
-    font-size: 12px;
+  .contacts__row { display: contents; }
+  .contacts dt {
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.8px;
     text-transform: uppercase;
     color: var(--faint);
     align-self: center;
   }
-  .cv__contact dd { text-align: right; color: var(--body); }
-  .cv__contact a:hover { color: var(--brand-bright); }
+  .contacts dd { text-align: right; color: var(--body); }
+  .contacts a:hover { color: var(--brand-bright); }
 
-  /* ── 섹션 제목: 제목 뒤로 가는 헤어라인 ────────── */
-  .cv__sec,
+  /* ── 본문 공통 ─────────────────────────────── */
+  .cv { padding-bottom: var(--s12); }
+
+  .sec,
   .cv__body :global(h2) {
     display: flex;
     align-items: center;
@@ -194,7 +263,8 @@ const { education, certifications } = about;
     font-weight: 700;
     color: var(--ink-soft);
   }
-  .cv__sec::after,
+  .cv > section:first-child .sec { margin-top: var(--s4); }
+  .sec::after,
   .cv__body :global(h2)::after {
     content: '';
     flex: 1;
@@ -202,7 +272,100 @@ const { education, certifications } = about;
     background: var(--hairline);
   }
 
-  /* ── 본문 ──────────────────────────────────── */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s1) 6px;
+    list-style: none;
+    padding: 0;
+  }
+  .period {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: var(--faint);
+  }
+
+  /* ── 핵심 역량: 카드 격자 ───────────────────── */
+  .skills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--s4);
+    list-style: none;
+    padding: 0;
+  }
+  .skill {
+    padding: var(--s5);
+    border-radius: var(--r-card);
+    background: var(--surface);
+    box-shadow: var(--ring);
+  }
+  .skill__label {
+    margin-bottom: var(--s3);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+
+  /* ── 경력: 회사 머리 + 가로로 긴 프로젝트 카드 ─── */
+  .job + .job { margin-top: var(--s12); }
+  .job__head,
+  .proj__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4);
+  }
+  .job__title { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+  .job__role { font-weight: 600; color: var(--muted); }
+  .job__note { margin-top: var(--s1); font-size: 15px; color: var(--body); word-break: keep-all; }
+
+  .projects {
+    display: grid;
+    gap: var(--s3);
+    margin-top: var(--s5);
+    list-style: none;
+    padding: 0;
+  }
+  .proj {
+    padding: var(--s5) var(--s6);
+    border-radius: var(--r-card);
+    background: var(--surface);
+    box-shadow: var(--ring);
+    transition: box-shadow var(--t-std) var(--e-std);
+  }
+  .proj:hover { box-shadow: var(--ring), var(--shadow-card); }
+  .proj__name { font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+  .proj .chips { margin-top: var(--s2); }
+
+  /* 대시 불릿, 두 번째 줄부터는 글머리 뒤로 들여쓴다 */
+  .points,
+  .cv__body :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .points { margin-top: var(--s4); }
+  .points li,
+  .cv__body :global(li) {
+    position: relative;
+    padding-left: 1.1em;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--body);
+    word-break: keep-all;
+  }
+  .points li + li { margin-top: var(--s1); }
+  .points li::before,
+  .cv__body :global(li)::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--faint);
+  }
+
+  /* ── 마크다운 본문(개인 프로젝트 등) ───────────── */
   .cv__body {
     font-size: 15px;
     line-height: 1.75;
@@ -211,82 +374,15 @@ const { education, certifications } = about;
   }
   .cv__body :global(p) { margin: 0 0 var(--s3); }
   .cv__body :global(a) { color: var(--brand-bright); }
-  .cv__body :global(strong) { color: var(--ink-soft); }
-
-  /* 회사 · 프로젝트 제목. <small>은 오른쪽 끝 기간 */
-  .cv__body :global(h3),
-  .cv__body :global(h4) {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--s4);
-    color: var(--ink);
-    line-height: 1.4;
-  }
-  .cv__body :global(h3) { margin: var(--s6) 0 var(--s2); font-size: 20px; font-weight: 700; }
-  .cv__body :global(h4) { margin: var(--s8) 0 var(--s1); font-size: 18px; font-weight: 700; }
-  .cv__body :global(h3 small),
-  .cv__body :global(h4 small) {
-    flex-shrink: 0;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    color: var(--faint);
-  }
-  /* 프로젝트 제목 바로 아래 한 줄: 역할 · 기술 */
-  .cv__body :global(h4 + p) {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: var(--s3);
-  }
-
-  /* 대시 불릿, 두 번째 줄부터는 글머리 뒤로 들여쓴다 */
-  .cv__body :global(ul),
-  .cv__list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 var(--s3);
-  }
-  .cv__body :global(li) {
-    position: relative;
-    padding-left: 1.1em;
-    margin-bottom: var(--s1);
-  }
-  .cv__body :global(li)::before {
-    content: '–';
-    position: absolute;
-    left: 0;
-    color: var(--faint);
-  }
-
-  /* 핵심 역량: 표를 2열 카드 격자로 편다. 머리행은 숨긴다 */
-  .cv__body :global(table) { display: block; width: 100%; }
-  .cv__body :global(thead) { display: none; }
-  .cv__body :global(tbody) {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s5) var(--s12);
-  }
-  .cv__body :global(tr) { display: block; }
-  .cv__body :global(td) { display: block; padding: 0; border: 0; background: none; }
-  .cv__body :global(td:first-child) {
-    margin-bottom: var(--s1);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-  .cv__body :global(td:last-child) { font-size: 14px; color: var(--muted); }
 
   /* ── 하단: 학력 | 자격 두 칸 ───────────────── */
-  .cv__foot {
+  .foot {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 var(--s12);
   }
-  .cv__list { font-size: 15px; line-height: 1.75; color: var(--body); }
-  .cv__list li { margin-bottom: var(--s2); }
+  .plain { list-style: none; padding: 0; font-size: 15px; line-height: 1.75; color: var(--body); }
+  .plain li + li { margin-top: var(--s2); }
 
   .empty {
     padding: var(--s12) var(--s5);
@@ -305,20 +401,18 @@ const { education, certifications } = about;
   }
 
   @media (max-width: 640px) {
-    .cv__contacts { column-gap: var(--s5); }
-    .cv__contact dd { text-align: left; }
-    .cv__body :global(tbody),
-    .cv__foot { grid-template-columns: 1fr; }
-    .cv__body :global(h3),
-    .cv__body :global(h4) { flex-wrap: wrap; row-gap: 0; }
+    .contacts { column-gap: var(--s5); }
+    .contacts dd { text-align: left; }
+    .foot { grid-template-columns: 1fr; }
+    .job__head,
+    .proj__head { flex-wrap: wrap; row-gap: 0; }
+    .proj { padding: var(--s4) var(--s5); }
   }
 
   @media print {
-    .cv { padding-top: 0; }
-    .cv__name { animation: none; }
-    .cv__sec,
-    .cv__body :global(h2) { margin-top: var(--s8); }
-    .cv__body :global(h3),
-    .cv__body :global(h4) { break-after: avoid; }
+    .band { background: none; border-bottom: 2px solid var(--ink-soft); padding-top: 0; }
+    .band__name { animation: none; }
+    .skill,
+    .proj { box-shadow: var(--ring); break-inside: avoid; }
   }
 </style>
