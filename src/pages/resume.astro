@@ -15,6 +15,7 @@ const doc = docs[0];
 // 본문(마크다운)은 내용이 있을 때만 싣는다. 지금은 모두 위쪽 데이터로 그린다.
 const hasBody = !!doc?.body?.trim();
 const Content = doc && hasBody ? (await render(doc)).Content : null;
+const intro = doc?.data.intro ?? [];
 const skills = doc?.data.skills ?? [];
 const career = doc?.data.career ?? [];
 
@@ -90,6 +91,15 @@ const { education, certifications } = about;
           지우면 이 자리에 실립니다.
         </p>
       </div>
+    )}
+
+    {intro.length > 0 && (
+      <section>
+        <h2 class="sec">요약</h2>
+        <ul class="points points--lead">
+          {intro.map((line) => <li>{line}</li>)}
+        </ul>
+      </section>
     )}
 
     {skills.length > 0 && (
@@ -383,6 +393,10 @@ const { education, certifications } = about;
   .proj--more:hover .proj__more,
   .proj--more:focus-visible .proj__more,
   .proj--more:focus-within .proj__more { grid-template-rows: 1fr; }
+
+  /* 요약 — 본문보다 한 단계 큰 글자 */
+  .points--lead li { font-size: 16px; color: var(--ink-soft); }
+  .points--lead li + li { margin-top: var(--s2); }
 
   .points--sub {
     margin-top: var(--s4);

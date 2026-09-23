@@ -63,6 +63,8 @@ const resume = defineCollection({
     /** 최종 수정일. 여러 장이면 이 값이 큰 것이 실립니다. */
     updated: z.coerce.date(),
     draft: z.boolean().default(false),
+    /** 요약 — 문서 맨 앞 세 줄. 비우면 섹션이 통째로 빠집니다 */
+    intro: z.array(z.string()).default([]),
     /** 핵심 역량 — 묶음 하나가 카드 한 장, 항목 하나가 칩 하나 */
     skills: z
       .array(z.object({ label: z.string(), items: z.array(z.string()) }))
