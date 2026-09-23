@@ -71,7 +71,7 @@ const resume = defineCollection({
     career: z
       .array(
         z.object({
-          company: z.string(),
+          company: z.string().optional(),
           role: z.string().optional(),
           period: z.string().optional(),
           /** 담당 도메인·팀 구성 한 줄 */
@@ -83,6 +83,8 @@ const resume = defineCollection({
                 period: z.string().optional(),
                 stack: z.array(z.string()).default([]),
                 points: z.array(z.string()).default([]),
+                /** 카드에 마우스를 올리면 펼쳐지는 상세 */
+                detail: z.array(z.string()).default([]),
               }),
             )
             .default([]),

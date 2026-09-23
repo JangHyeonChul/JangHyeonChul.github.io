@@ -12,7 +12,9 @@ const docs = (await getCollection('resume'))
   .sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf());
 
 const doc = docs[0];
-const Content = doc ? (await render(doc)).Content : null;
+// 본문(마크다운)은 내용이 있을 때만 싣는다. 지금은 모두 위쪽 데이터로 그린다.
+const hasBody = !!doc?.body?.trim();
+const Content = doc && hasBody ? (await render(doc)).Content : null;
 const skills = doc?.data.skills ?? [];
 const career = doc?.data.career ?? [];
 
@@ -113,7 +115,9 @@ const { education, certifications } = about;
           <div class="job">
             <div class="job__head">
               <h3 class="job__title">
-                {c.company}{c.role && <span class="job__role"> · {c.role}</span>}
+                {c.company}
+                {c.company && c.role && <span class="job__role"> · </span>}
+                {c.role && <span class={c.company ? 'job__role' : ''}>{c.role}</span>}
               </h3>
               {c.period && <p class="period">{c.period}</p>}
             </div>
@@ -122,7 +126,7 @@ const { education, certifications } = about;
             {c.projects.length > 0 && (
               <ul class="projects">
                 {c.projects.map((p) => (
-                  <li class="proj">
+                  <li class={p.detail.length > 0 ? 'proj proj--more' : 'proj'} tabindex={p.detail.length > 0 ? 0 : undefined}>
                     <div class="proj__head">
                       <h4 class="proj__name">{p.name}</h4>
                       {p.period && <p class="period">{p.period}</p>}
@@ -136,6 +140,15 @@ const { education, certifications } = about;
                       <ul class="points">
                         {p.points.map((pt) => <li>{pt}</li>)}
                       </ul>
+                    )}
+                    {p.detail.length > 0 && (
+                      <div class="proj__more">
+                        <div class="proj__more-in">
+                          <ul class="points points--sub">
+                            {p.detail.map((d) => <li>{d}</li>)}
+                          </ul>
+                        </div>
+                      </div>
                     )}
                   </li>
                 ))}
@@ -290,7 +303,7 @@ const { education, certifications } = about;
   /* ── 핵심 역량: 카드 격자 ───────────────────── */
   .skills {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
     gap: var(--s4);
     list-style: none;
     padding: 0;
@@ -336,6 +349,47 @@ const { education, certifications } = about;
     transition: box-shadow var(--t-std) var(--e-std);
   }
   .proj:hover { box-shadow: var(--ring), var(--shadow-card); }
+
+  /* 상세가 있는 카드: 올리면 아래가 열린다. 오른쪽 위 꺾쇠가 그 신호 */
+  .proj--more { position: relative; }
+  .proj--more .proj__head { padding-right: var(--s6); }
+  .proj--more::after {
+    content: '';
+    position: absolute;
+    right: var(--s6);
+    top: calc(var(--s5) + 6px);
+    width: 8px;
+    height: 8px;
+    border-right: 1.6px solid var(--faint);
+    border-bottom: 1.6px solid var(--faint);
+    transform: rotate(45deg);
+    transition:
+      transform var(--t-std) var(--e-enter),
+      border-color var(--t-fast) var(--e-std);
+  }
+  .proj--more:hover::after,
+  .proj--more:focus-visible::after {
+    transform: rotate(225deg);
+    border-color: var(--brand-bright);
+  }
+  .proj--more:focus-visible { outline: 2px solid var(--brand-bright); outline-offset: 2px; }
+
+  .proj__more {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--t-std) var(--e-enter);
+  }
+  .proj__more-in { overflow: hidden; }
+  .proj--more:hover .proj__more,
+  .proj--more:focus-visible .proj__more,
+  .proj--more:focus-within .proj__more { grid-template-rows: 1fr; }
+
+  .points--sub {
+    margin-top: var(--s4);
+    padding-top: var(--s4);
+    border-top: 1px dashed var(--hairline);
+  }
+  .points--sub li { font-size: 14px; color: var(--muted); }
   .proj__name { font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.4; }
   .proj .chips { margin-top: var(--s2); }
 
@@ -409,7 +463,16 @@ const { education, certifications } = about;
     .proj { padding: var(--s4) var(--s5); }
   }
 
+  /* 손가락으로 보는 화면에는 호버가 없다 — 처음부터 펼쳐 둔다 */
+  @media (hover: none) {
+    .proj__more { grid-template-rows: 1fr; }
+    .proj--more::after { display: none; }
+    .proj--more .proj__head { padding-right: 0; }
+  }
+
   @media print {
+    .proj__more { grid-template-rows: 1fr; }
+    .proj--more::after { display: none; }
     .band { background: none; border-bottom: 2px solid var(--ink-soft); padding-top: 0; }
     .band__name { animation: none; }
     .skill,
