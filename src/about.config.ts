@@ -59,7 +59,7 @@ export const about: About = {
 
   career: [
     {
-      role: 'BackEnd Developer',
+      role: 'Backend · Data Engineer',
       period: '2023.09 – 재직 중',
     },
   ],

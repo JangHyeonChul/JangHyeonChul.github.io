@@ -25,7 +25,7 @@ skills:
 # 경력 — 프로젝트 하나가 가로로 긴 카드 한 장.
 # points 는 항상 보이고, detail 은 카드에 마우스를 올리면 펼쳐집니다.
 career:
-  - role: BackEnd Developer
+  - role: Backend · Data Engineer
     period: 2023.09 – 재직 중
     projects:
       - name: 센서 데이터 이상 탐지 머신러닝 파이프라인 구축
