@@ -12,7 +12,7 @@ skills:
   - label: Database
     items: [MySQL]
   - label: Infra
-    items: [AWS, Docker, GitHub Actions]
+    items: [AWS, Docker, GitHub Actions, OpenTelemetry]
   - label: Data
     items: [Hadoop, Hive, Spark, PyTorch, scikit-learn]
 
@@ -23,13 +23,14 @@ career:
     period: 2023.09 – 재직 중
     projects:
       - name: 에러 모니터링 서버 신규 구축
-        stack: [Java, Spring Boot, Slack API]
+        stack: [Java, Spring Boot, OpenTelemetry, Slack API]
         points:
-          - 로그 수집 도구를 사내 공통 모듈로 배포해 코드 수정 없이 10여 개 서비스의 에러를 자동 수집
-          - 수백 개 매장에서 쓰는 서버·단말·외부 연동의 에러를 한 곳으로 모으고, 발생 즉시 담당자에게 Slack 알림
+          - 로그 수집 도구를 사내 공통 모듈로 배포해 코드 수정 없이 MSA 10여 개 서비스의 에러를 자동 수집
+          - 분산 추적을 도입해 서비스 간 호출을 하나의 흐름으로 잇고, 발생 즉시 담당자에게 Slack 알림
         detail:
           - 수집 서버를 설계부터 배포까지 코어 개발로 맡아 새로 구축
           - 도입 전에는 이상을 감지한 뒤 컨테이너 로그를 직접 열어 찾아야 했지만, 이후 에러가 먼저 담당자에게 도착
+          - OpenTelemetry로 서비스 간 호출에 추적 ID를 전파해, 어느 서비스에서 시작된 요청인지 한 줄로 추적
           - 에러가 발생한 위치와 요청 정보를 함께 담아 보내, 재현 없이 원인을 좁힐 수 있게 함
           - 알림을 도메인별로 나누는 구조를 잡아, 새 서비스가 늘어도 클래스 하나만 추가하면 되도록 설계
           - 에러 종류에 따라 담당자를 자동으로 지목하고 알림 채널을 분리
