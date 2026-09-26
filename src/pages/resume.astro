@@ -136,28 +136,44 @@ const { education, certifications } = about;
             {c.projects.length > 0 && (
               <ul class="projects">
                 {c.projects.map((p) => (
-                  <li class={p.detail.length > 0 ? 'proj proj--more' : 'proj'} tabindex={p.detail.length > 0 ? 0 : undefined}>
+                  <li class="proj">
                     <div class="proj__head">
                       <h4 class="proj__name">{p.name}</h4>
                       {p.period && <p class="period">{p.period}</p>}
                     </div>
-                    {p.stack.length > 0 && (
-                      <ul class="chips" aria-label="기술 스택">
-                        {p.stack.map((t) => <li class="chip">{t}</li>)}
-                      </ul>
+                    {p.overview && <p class="proj__overview">{p.overview}</p>}
+
+                    {(p.role || p.team || p.stack.length > 0) && (
+                      <dl class="meta">
+                        {p.role && (<><dt>역할</dt><dd>{p.role}</dd></>)}
+                        {p.team && (<><dt>인원</dt><dd>{p.team}</dd></>)}
+                        {p.stack.length > 0 && (
+                          <>
+                            <dt>기술</dt>
+                            <dd>
+                              <ul class="chips" aria-label="기술 스택">
+                                {p.stack.map((t) => <li class="chip">{t}</li>)}
+                              </ul>
+                            </dd>
+                          </>
+                        )}
+                      </dl>
                     )}
-                    {p.points.length > 0 && (
-                      <ul class="points">
-                        {p.points.map((pt) => <li>{pt}</li>)}
-                      </ul>
+
+                    {p.tasks.length > 0 && (
+                      <>
+                        <h5 class="proj__label">주요 업무</h5>
+                        <ul class="points">
+                          {p.tasks.map((t) => <li>{t}</li>)}
+                        </ul>
+                      </>
                     )}
-                    {p.detail.length > 0 && (
-                      <div class="proj__more">
-                        <div class="proj__more-in">
-                          <ul class="points points--sub">
-                            {p.detail.map((d) => <li>{d}</li>)}
-                          </ul>
-                        </div>
+                    {p.outcomes.length > 0 && (
+                      <div class="outcomes">
+                        <h5 class="proj__label">성과</h5>
+                        <ul class="points">
+                          {p.outcomes.map((o) => <li>{o}</li>)}
+                        </ul>
                       </div>
                     )}
                   </li>
@@ -360,52 +376,54 @@ const { education, certifications } = about;
   }
   .proj:hover { box-shadow: var(--ring), var(--shadow-card); }
 
-  /* 상세가 있는 카드: 올리면 아래가 열린다. 오른쪽 위 꺾쇠가 그 신호 */
-  .proj--more { position: relative; }
-  .proj--more .proj__head { padding-right: var(--s6); }
-  .proj--more::after {
-    content: '';
-    position: absolute;
-    right: var(--s6);
-    top: calc(var(--s5) + 6px);
-    width: 8px;
-    height: 8px;
-    border-right: 1.6px solid var(--faint);
-    border-bottom: 1.6px solid var(--faint);
-    transform: rotate(45deg);
-    transition:
-      transform var(--t-std) var(--e-enter),
-      border-color var(--t-fast) var(--e-std);
+  .proj__overview {
+    margin-top: var(--s2);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    word-break: keep-all;
   }
-  .proj--more:hover::after,
-  .proj--more:focus-visible::after {
-    transform: rotate(225deg);
-    border-color: var(--brand-bright);
-  }
-  .proj--more:focus-visible { outline: 2px solid var(--brand-bright); outline-offset: 2px; }
 
-  .proj__more {
+  /* 역할 · 인원 · 기술 — 왼쪽 라벨, 오른쪽 값 */
+  .meta {
     display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows var(--t-std) var(--e-enter);
+    grid-template-columns: auto 1fr;
+    column-gap: var(--s4);
+    row-gap: var(--s2);
+    align-items: baseline;
+    margin-top: var(--s4);
+    font-size: 14px;
   }
-  .proj__more-in { overflow: hidden; }
-  .proj--more:hover .proj__more,
-  .proj--more:focus-visible .proj__more,
-  .proj--more:focus-within .proj__more { grid-template-rows: 1fr; }
+  .meta dt {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--faint);
+  }
+  .meta dd { margin: 0; color: var(--body); word-break: keep-all; }
+  .meta .chips { margin-top: 0; }
+
+  .proj__label {
+    margin-top: var(--s5);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .proj__label + .points { margin-top: var(--s2); }
+
+  /* 성과 — 브랜드 색 세로줄로 한 번 더 눈에 걸리게 */
+  .outcomes {
+    margin-top: var(--s5);
+    padding: var(--s1) 0 var(--s1) var(--s4);
+    border-left: 2px solid var(--brand-bright);
+  }
+  .outcomes .proj__label { margin-top: 0; color: var(--brand-bright); }
+  .outcomes li { color: var(--ink-soft); }
 
   /* 요약 — 본문보다 한 단계 큰 글자 */
   .points--lead li { font-size: 16px; color: var(--ink-soft); }
   .points--lead li + li { margin-top: var(--s2); }
 
-  .points--sub {
-    margin-top: var(--s4);
-    padding-top: var(--s4);
-    border-top: 1px dashed var(--hairline);
-  }
-  .points--sub li { font-size: 14px; color: var(--muted); }
   .proj__name { font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.4; }
-  .proj .chips { margin-top: var(--s2); }
 
   /* 대시 불릿, 두 번째 줄부터는 글머리 뒤로 들여쓴다 */
   .points,
@@ -477,16 +495,7 @@ const { education, certifications } = about;
     .proj { padding: var(--s4) var(--s5); }
   }
 
-  /* 손가락으로 보는 화면에는 호버가 없다 — 처음부터 펼쳐 둔다 */
-  @media (hover: none) {
-    .proj__more { grid-template-rows: 1fr; }
-    .proj--more::after { display: none; }
-    .proj--more .proj__head { padding-right: 0; }
-  }
-
   @media print {
-    .proj__more { grid-template-rows: 1fr; }
-    .proj--more::after { display: none; }
     .band { background: none; border-bottom: 2px solid var(--ink-soft); padding-top: 0; }
     .band__name { animation: none; }
     .skill,

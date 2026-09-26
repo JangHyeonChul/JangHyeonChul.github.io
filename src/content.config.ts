@@ -83,10 +83,17 @@ const resume = defineCollection({
               z.object({
                 name: z.string(),
                 period: z.string().optional(),
+                /** 프로젝트 개요 한 줄 — 무엇을 왜 만들었는지 */
+                overview: z.string().optional(),
+                /** 담당 역할. 예: '코어 개발 (설계 ~ 배포)' */
+                role: z.string().optional(),
+                /** 인원 구성·협업 범위. 예: 'PM 1, 백엔드 3' */
+                team: z.string().optional(),
                 stack: z.array(z.string()).default([]),
-                points: z.array(z.string()).default([]),
-                /** 카드에 마우스를 올리면 펼쳐지는 상세 */
-                detail: z.array(z.string()).default([]),
+                /** 주요 업무 */
+                tasks: z.array(z.string()).default([]),
+                /** 성과 — 가능하면 수치로 */
+                outcomes: z.array(z.string()).default([]),
               }),
             )
             .default([]),
