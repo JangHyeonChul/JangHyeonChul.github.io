@@ -94,6 +94,8 @@ const resume = defineCollection({
                 tasks: z.array(z.string()).default([]),
                 /** 성과 — 가능하면 수치로 */
                 outcomes: z.array(z.string()).default([]),
+                /** 문제 해결 — 증상 → 원인 → 조치 한 줄 */
+                issues: z.array(z.string()).default([]),
               }),
             )
             .default([]),

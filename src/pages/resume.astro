@@ -176,6 +176,14 @@ const { education, certifications } = about;
                         </ul>
                       </div>
                     )}
+                    {p.issues.length > 0 && (
+                      <>
+                        <h5 class="proj__label">문제 해결</h5>
+                        <ul class="points">
+                          {p.issues.map((t) => <li>{t}</li>)}
+                        </ul>
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>
