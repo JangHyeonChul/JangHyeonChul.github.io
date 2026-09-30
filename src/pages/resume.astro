@@ -135,8 +135,10 @@ const { education, certifications } = about;
 
             {c.projects.length > 0 && (
               <ul class="projects">
-                {c.projects.map((p) => (
-                  <li class="proj">
+                {c.projects.map((p) => {
+                  const more = !!(p.role || p.team) || [p.stack, p.tasks, p.outcomes, p.issues].some((l) => l.length > 0);
+                  return (
+                  <li class={more ? 'proj proj--more' : 'proj'} tabindex={more ? 0 : undefined}>
                     <div class="proj__head">
                       <div>
                         {p.headline && <p class="proj__headline">{p.headline}</p>}
@@ -146,49 +148,63 @@ const { education, certifications } = about;
                     </div>
                     {p.overview && <p class="proj__overview">{p.overview}</p>}
 
-                    {(p.role || p.team || p.stack.length > 0) && (
-                      <dl class="meta">
-                        {p.role && (<><dt>역할</dt><dd>{p.role}</dd></>)}
-                        {p.team && (<><dt>인원</dt><dd>{p.team}</dd></>)}
-                        {p.stack.length > 0 && (
-                          <>
-                            <dt>기술</dt>
-                            <dd>
-                              <ul class="chips" aria-label="기술 스택">
-                                {p.stack.map((t) => <li class="chip">{t}</li>)}
-                              </ul>
-                            </dd>
-                          </>
-                        )}
-                      </dl>
+                    {more && (
+                      <p class="proj__hint" aria-hidden="true">
+                        <span>역할 · 기술 · 성과 자세히</span>
+                        <span class="proj__chev"></span>
+                      </p>
                     )}
 
-                    {p.tasks.length > 0 && (
-                      <>
-                        <h5 class="proj__label">주요 업무</h5>
-                        <ul class="points">
-                          {p.tasks.map((t) => <li>{t}</li>)}
-                        </ul>
-                      </>
-                    )}
-                    {p.outcomes.length > 0 && (
-                      <div class="outcomes">
-                        <h5 class="proj__label">성과</h5>
-                        <ul class="points">
-                          {p.outcomes.map((o) => <li>{o}</li>)}
-                        </ul>
+                    {more && (
+                      <div class="proj__more">
+                        <div class="proj__more-in">
+                          {(p.role || p.team || p.stack.length > 0) && (
+                            <dl class="meta">
+                              {p.role && (<><dt>역할</dt><dd>{p.role}</dd></>)}
+                              {p.team && (<><dt>인원</dt><dd>{p.team}</dd></>)}
+                              {p.stack.length > 0 && (
+                                <>
+                                  <dt>기술</dt>
+                                  <dd>
+                                    <ul class="chips" aria-label="기술 스택">
+                                      {p.stack.map((t) => <li class="chip">{t}</li>)}
+                                    </ul>
+                                  </dd>
+                                </>
+                              )}
+                            </dl>
+                          )}
+
+                          {p.tasks.length > 0 && (
+                            <>
+                              <h5 class="proj__label">주요 업무</h5>
+                              <ul class="points">
+                                {p.tasks.map((t) => <li>{t}</li>)}
+                              </ul>
+                            </>
+                          )}
+                          {p.outcomes.length > 0 && (
+                            <div class="outcomes">
+                              <h5 class="proj__label">성과</h5>
+                              <ul class="points">
+                                {p.outcomes.map((o) => <li>{o}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                          {p.issues.length > 0 && (
+                            <>
+                              <h5 class="proj__label">문제 해결</h5>
+                              <ul class="points">
+                                {p.issues.map((t) => <li>{t}</li>)}
+                              </ul>
+                            </>
+                          )}
+                        </div>
                       </div>
                     )}
-                    {p.issues.length > 0 && (
-                      <>
-                        <h5 class="proj__label">문제 해결</h5>
-                        <ul class="points">
-                          {p.issues.map((t) => <li>{t}</li>)}
-                        </ul>
-                      </>
-                    )}
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             )}
           </div>
@@ -387,6 +403,77 @@ const { education, certifications } = about;
   }
   .proj:hover { box-shadow: var(--ring), var(--shadow-card); }
 
+  /* 접히는 카드: 머리·개요만 보이고, 올리면 역할·기술·업무·성과가 열린다 */
+  .proj--more {
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition:
+      box-shadow var(--t-std) var(--e-std),
+      transform var(--t-std) var(--e-enter);
+  }
+  /* 왼쪽 브랜드 색 막대 — 열릴 때 위에서 아래로 그어진다 */
+  .proj--more::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--brand-bright);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--t-std) var(--e-enter);
+  }
+  .proj--more:hover,
+  .proj--more:focus-within {
+    transform: translateY(-2px);
+    box-shadow: var(--ring), var(--shadow-card);
+  }
+  .proj--more:hover::before,
+  .proj--more:focus-within::before { transform: scaleY(1); }
+  .proj--more:focus-visible { outline: 2px solid var(--brand-bright); outline-offset: 2px; }
+
+  /* "자세히" 안내 — 열리면 꺾쇠가 뒤집히고 글자는 흐려진다 */
+  .proj__hint {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    margin-top: var(--s3);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-bright);
+    transition: opacity var(--t-std) var(--e-std);
+  }
+  .proj__chev {
+    width: 7px;
+    height: 7px;
+    margin-top: -3px;
+    border-right: 1.6px solid currentColor;
+    border-bottom: 1.6px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform var(--t-std) var(--e-enter);
+  }
+  .proj--more:hover .proj__hint,
+  .proj--more:focus-within .proj__hint { opacity: 0.45; }
+  .proj--more:hover .proj__chev,
+  .proj--more:focus-within .proj__chev { transform: translateY(3px) rotate(225deg); }
+
+  .proj__more {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows var(--t-std) var(--e-enter),
+      opacity var(--t-std) var(--e-std);
+  }
+  .proj__more-in { overflow: hidden; }
+  .proj--more:hover .proj__more,
+  .proj--more:focus-within .proj__more {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
   .proj__overview {
     margin-top: var(--s2);
     font-size: 15px;
@@ -521,7 +608,18 @@ const { education, certifications } = about;
     .proj { padding: var(--s4) var(--s5); }
   }
 
+  /* 호버가 없는 화면(휴대폰)과 인쇄에서는 처음부터 펼쳐 둔다 */
+  @media (hover: none) {
+    .proj__more { grid-template-rows: 1fr; opacity: 1; }
+    .proj__hint,
+    .proj--more::before { display: none; }
+    .proj--more:focus-within { transform: none; }
+  }
+
   @media print {
+    .proj__more { grid-template-rows: 1fr; opacity: 1; }
+    .proj__hint,
+    .proj--more::before { display: none; }
     .band { background: none; border-bottom: 2px solid var(--ink-soft); padding-top: 0; }
     .band__name { animation: none; }
     .skill,

@@ -7,7 +7,7 @@ updated: 2026-09-30
 intro:
   - 경력 3년 1개월 · 주임 · Backend · Data Engineer (2023.09 – 재직 중)
   - 철도 차량 18종 장치의 센서 데이터를 Spark·Hive로 진단하고, 그 위에 장치 19종을 묶는 이상 탐지 파이프라인을 만들고 있습니다.
-  - 매장 POS 서비스에서는 알림톡 발송 서버(API 96개)와 에러 모니터링 서버를 메인 개발자로 만들고 운영했습니다.
+  - MSA 10여 개 서비스로 이뤄진 매장 POS 서비스에서, 알림톡 발송 서버(API 96개)와 에러 모니터링 서버를 메인 개발자로 만들고 운영했습니다.
   - 장치나 도메인이 늘어도 클래스만 추가하면 붙는 구조를 선호하고, 처리 과정을 지표로 남겨 추적할 수 있게 만듭니다.
 
 # 핵심 역량 — 묶음 하나가 카드 한 장, 항목 하나가 작은 칩 하나로 그려집니다.
@@ -20,8 +20,8 @@ skills:
     items: [Spring Boot, Spring Cloud Gateway, Netty, MyBatis, .NET WinForms]
   - label: Database
     items: [MySQL, Hive, Redis]
-  - label: Infra
-    items: [AWS, Docker, GitHub Actions, OpenTelemetry]
+  - label: Infra / Architecture
+    items: [MSA, AWS, Docker, GitHub Actions, OpenTelemetry]
   - label: 협업
     items: [Git, GitHub, Slack]
 
@@ -31,7 +31,7 @@ career:
   - company: IT 솔루션 기업
     role: 주임 · Backend · Data Engineer
     period: 2023.09 – 재직 중
-    note: 철도 차량 상태 기반 정비(CBM) 데이터 플랫폼과 매장 POS 서비스의 백엔드·데이터 개발
+    note: 철도 차량 상태 기반 정비(CBM) 데이터 플랫폼과 MSA 기반 매장 POS 서비스의 백엔드·데이터 개발
     projects:
       - headline: 빅데이터 기반 이상 탐지 머신러닝 개발
         name: 센서 데이터 이상 탐지 머신러닝 파이프라인 구축
@@ -88,7 +88,7 @@ career:
       - headline: 매장 알림 메시지 발송 · 요금 정산 서버 개발
         name: 알림톡 발송 · 캐시 정산 서버 개발
         period: 2024.10 – 2026.08
-        overview: 매장이 주문·배달·시스템 알림톡을 보내고, 발송 비용을 캐시로 충전·환불하는 메시지 발송 서버
+        overview: MSA로 구성된 매장 POS 서비스 중, 주문·배달·시스템 알림톡을 보내고 발송 비용을 캐시로 충전·환불하는 메시지 발송 서비스
         role: 메인 개발 — 설계부터 운영까지
         team: 백엔드 2명
         stack: [Java, Spring Boot, MyBatis, MySQL, Redis]
@@ -106,7 +106,7 @@ career:
       - headline: 서비스 장애를 자동으로 잡아 알려주는 모니터링 시스템 구축
         name: 에러 모니터링 서버 신규 구축
         period: 2024.12 – 2025.06
-        overview: 서버와 매장 단말에서 발생한 에러를 자동으로 수집하고, 발생 즉시 담당자에게 알리는 모니터링 서버
+        overview: MSA로 나뉜 POS 서비스와 매장 단말에서 발생한 에러를 자동으로 수집하고, 발생 즉시 담당자에게 알리는 모니터링 서버
         role: 메인 개발 — 설계부터 배포까지
         team: 백엔드 4명
         stack: [Java, Spring Boot, MyBatis, MySQL, Log4j2, OpenTelemetry, Slack API]
