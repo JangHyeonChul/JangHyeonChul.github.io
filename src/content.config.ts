@@ -81,6 +81,8 @@ const resume = defineCollection({
           projects: z
             .array(
               z.object({
+                /** 카드 맨 위 대표 문구 — 처음 보는 사람도 무슨 일인지 알 만한 한 줄 */
+                headline: z.string().optional(),
                 name: z.string(),
                 period: z.string().optional(),
                 /** 프로젝트 개요 한 줄 — 무엇을 왜 만들었는지 */

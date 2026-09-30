@@ -138,7 +138,10 @@ const { education, certifications } = about;
                 {c.projects.map((p) => (
                   <li class="proj">
                     <div class="proj__head">
-                      <h4 class="proj__name">{p.name}</h4>
+                      <div>
+                        {p.headline && <p class="proj__headline">{p.headline}</p>}
+                        <h4 class="proj__name">{p.name}</h4>
+                      </div>
                       {p.period && <p class="period">{p.period}</p>}
                     </div>
                     {p.overview && <p class="proj__overview">{p.overview}</p>}
@@ -432,6 +435,21 @@ const { education, certifications } = about;
   .points--lead li + li { margin-top: var(--s2); }
 
   .proj__name { font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+  /* 대표 문구가 있으면 그것이 제목이 되고, 프로젝트명은 한 단계 작게 받친다 */
+  .proj__headline {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    color: var(--ink);
+    word-break: keep-all;
+  }
+  .proj__headline + .proj__name {
+    margin-top: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+  }
 
   /* 대시 불릿, 두 번째 줄부터는 글머리 뒤로 들여쓴다 */
   .points,
