@@ -136,7 +136,7 @@ const { education, certifications } = about;
             {c.projects.length > 0 && (
               <ul class="projects">
                 {c.projects.map((p) => {
-                  const more = !!(p.role || p.team) || [p.stack, p.tasks, p.outcomes, p.issues].some((l) => l.length > 0);
+                  const more = !!(p.role || p.team) || [p.stack, p.tasks, p.outcomes].some((l) => l.length > 0);
                   return (
                   <li class={more ? 'proj proj--more' : 'proj'} tabindex={more ? 0 : undefined}>
                     <div class="proj__head">
@@ -190,14 +190,6 @@ const { education, certifications } = about;
                                 {p.outcomes.map((o) => <li>{o}</li>)}
                               </ul>
                             </div>
-                          )}
-                          {p.issues.length > 0 && (
-                            <>
-                              <h5 class="proj__label">문제 해결</h5>
-                              <ul class="points">
-                                {p.issues.map((t) => <li>{t}</li>)}
-                              </ul>
-                            </>
                           )}
                         </div>
                       </div>
