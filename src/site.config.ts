@@ -12,7 +12,6 @@ export const site = {
   contacts: [
     { label: 'About', value: '학력 · 자격증', href: '/about/' },
     { label: 'GitHub', value: 'github.com/JangHyeonChul', href: 'https://github.com/JangHyeonChul' },
-    { label: 'Blog', value: 'coco16.tistory.com', href: 'https://coco16.tistory.com/' },
     { label: 'Email', value: 'wkdgus1139@gmail.com', href: 'mailto:wkdgus1139@gmail.com' },
   ],
 } as const;

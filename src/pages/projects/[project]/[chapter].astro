@@ -125,21 +125,29 @@ const linkTo = (c: typeof prev) =>
   const head = document.querySelector('.post__head');
   const foot = document.querySelector('.post__nav');
 
-  if (dock && head && foot && 'IntersectionObserver' in window) {
-    let pastHead = false;
-    let footInView = false;
-    const sync = () => dock.classList.toggle('is-on', pastHead && !footInView);
+  if (dock && head && foot) {
+    // 스크롤할 때마다 위치를 직접 잰다. 이벤트를 모아 받는 방식은 빠르게 스크롤하면
+    // 지난 상태로 판단해 바가 안 뜨는 일이 있어서, 매 프레임 한 번씩 다시 계산한다.
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const pastHead = head.getBoundingClientRect().bottom <= 0;            // 헤더가 화면 위로 다 올라감
+      const footInView = foot.getBoundingClientRect().top < innerHeight;   // 맨 아래 이전/다음이 보이기 시작함
+      dock.classList.toggle('is-on', pastHead && !footInView);
+    };
+    const request = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
 
-    new IntersectionObserver(([e]) => {
-      // 헤더가 화면 위로 완전히 빠져나갔을 때만 "지나갔다"로 본다
-      pastHead = !e.isIntersecting && e.boundingClientRect.top < 0;
-      sync();
-    }).observe(head);
-
-    new IntersectionObserver(([e]) => {
-      footInView = e.isIntersecting;
-      sync();
-    }).observe(foot);
+    addEventListener('scroll', request, { passive: true });
+    addEventListener('resize', request);
+    // 이미지가 늦게 들어와 높이가 바뀌거나, 뒤로 가기로 중간 위치에서 열릴 때도 다시 잰다
+    addEventListener('load', request);
+    addEventListener('pageshow', request);
+    update();
   }
 </script>
 
