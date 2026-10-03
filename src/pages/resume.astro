@@ -136,7 +136,7 @@ const { education, certifications } = about;
             {c.projects.length > 0 && (
               <ul class="projects">
                 {c.projects.map((p) => {
-                  const more = !!(p.role || p.team) || [p.stack, p.tasks, p.outcomes].some((l) => l.length > 0);
+                  const more = !!(p.role || p.team) || [p.stack, p.context, p.decisions, p.outcomes].some((l) => l.length > 0);
                   return (
                   <li class={more ? 'proj proj--more' : 'proj'} tabindex={more ? 0 : undefined}>
                     <div class="proj__head">
@@ -146,11 +146,16 @@ const { education, certifications } = about;
                       </div>
                       {p.period && <p class="period">{p.period}</p>}
                     </div>
-                    {p.overview && <p class="proj__overview">{p.overview}</p>}
+                    {p.problem && (
+                      <p class="proj__overview">
+                        <span class="proj__tag">해결한 문제</span>
+                        {p.problem}
+                      </p>
+                    )}
 
                     {more && (
                       <p class="proj__hint" aria-hidden="true">
-                        <span>역할 · 기술 · 성과 자세히</span>
+                        <span>배경 · 판단 · 결과 자세히</span>
                         <span class="proj__chev"></span>
                       </p>
                     )}
@@ -175,17 +180,25 @@ const { education, certifications } = about;
                             </dl>
                           )}
 
-                          {p.tasks.length > 0 && (
+                          {p.context.length > 0 && (
                             <>
-                              <h5 class="proj__label">주요 업무</h5>
+                              <h5 class="proj__label">왜 중요했고, 어떤 제약이 있었나</h5>
                               <ul class="points">
-                                {p.tasks.map((t) => <li>{t}</li>)}
+                                {p.context.map((t) => <li>{t}</li>)}
+                              </ul>
+                            </>
+                          )}
+                          {p.decisions.length > 0 && (
+                            <>
+                              <h5 class="proj__label">어떤 판단을 했나</h5>
+                              <ul class="points">
+                                {p.decisions.map((t) => <li>{t}</li>)}
                               </ul>
                             </>
                           )}
                           {p.outcomes.length > 0 && (
                             <div class="outcomes">
-                              <h5 class="proj__label">성과</h5>
+                              <h5 class="proj__label">무엇이 달라졌나</h5>
                               <ul class="points">
                                 {p.outcomes.map((o) => <li>{o}</li>)}
                               </ul>
@@ -467,11 +480,23 @@ const { education, certifications } = about;
   }
 
   .proj__overview {
-    margin-top: var(--s2);
+    margin-top: var(--s3);
     font-size: 15px;
     line-height: 1.7;
     color: var(--ink-soft);
     word-break: keep-all;
+  }
+  /* "해결한 문제" 꼬리표 — 본문 앞에 붙는 작은 브랜드 색 라벨 */
+  .proj__tag {
+    display: inline-block;
+    margin-right: var(--s2);
+    padding: 1px 8px;
+    border-radius: var(--r-chip);
+    background: color-mix(in srgb, var(--brand) 12%, transparent);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brand-bright);
+    vertical-align: 1px;
   }
 
   /* 역할 · 인원 · 기술 — 왼쪽 라벨, 오른쪽 값 */
