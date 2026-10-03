@@ -99,7 +99,8 @@ const linkTo = (c: typeof prev) =>
   /* ── 블로그 표면 ──────────────────────────────────────
      HDS 2-surface 규칙: 여기서는 Spoqa Han Sans + 에디토리얼
      스케일(32px/700/-1px/1.44) + 20px 라디우스를 쓴다.      */
-  .wrap--prose { max-width: var(--maxw-prose); }
+  /* 챕터 글도 사이트 헤더와 같은 폭(--maxw)을 쓴다 */
+  .wrap--prose { max-width: var(--maxw); }
 
   .post__head {
     background: var(--brand-tint);
