@@ -93,7 +93,55 @@ const linkTo = (c: typeof prev) =>
       </a>
     </div>
   </article>
+
+  {/* 떠 있는 이전/다음 — 헤더를 지나 내려가면 나타나고, 맨 아래 이전/다음 카드가 보이면 숨는다 */}
+  <nav class="dock" aria-label="챕터 이동 (고정)" data-dock>
+    {prev ? (
+      <a class="dock__btn" href={linkTo(prev)} title={`이전 챕터: ${prev.data.title}`}>
+        <span class="dock__arrow" aria-hidden="true">‹</span>
+        <span class="dock__t">{prev.data.title}</span>
+      </a>
+    ) : (
+      <span class="dock__btn is-off" aria-hidden="true"><span class="dock__arrow">‹</span><span class="dock__t">처음 챕터</span></span>
+    )}
+
+    <a class="dock__mid" href={`/projects/${project.id}/`} title={`${project.data.title} 챕터 목록`}>
+      {n} / {total}
+    </a>
+
+    {next ? (
+      <a class="dock__btn dock__btn--next" href={linkTo(next)} title={`다음 챕터: ${next.data.title}`}>
+        <span class="dock__t">{next.data.title}</span>
+        <span class="dock__arrow" aria-hidden="true">›</span>
+      </a>
+    ) : (
+      <span class="dock__btn dock__btn--next is-off" aria-hidden="true"><span class="dock__t">마지막 챕터</span><span class="dock__arrow">›</span></span>
+    )}
+  </nav>
 </BaseLayout>
+
+<script>
+  const dock = document.querySelector<HTMLElement>('[data-dock]');
+  const head = document.querySelector('.post__head');
+  const foot = document.querySelector('.post__nav');
+
+  if (dock && head && foot && 'IntersectionObserver' in window) {
+    let pastHead = false;
+    let footInView = false;
+    const sync = () => dock.classList.toggle('is-on', pastHead && !footInView);
+
+    new IntersectionObserver(([e]) => {
+      // 헤더가 화면 위로 완전히 빠져나갔을 때만 "지나갔다"로 본다
+      pastHead = !e.isIntersecting && e.boundingClientRect.top < 0;
+      sync();
+    }).observe(head);
+
+    new IntersectionObserver(([e]) => {
+      footInView = e.isIntersecting;
+      sync();
+    }).observe(foot);
+  }
+</script>
 
 <style>
   /* ── 블로그 표면 ──────────────────────────────────────
@@ -192,10 +240,93 @@ const linkTo = (c: typeof prev) =>
 
   .post__back { margin-top: var(--s6); }
   .post__back .btn { font-family: var(--font-product); font-size: 14px; }
+  /* 떠 있는 내비게이션이 마지막 줄을 가리지 않게 여유를 둔다 */
+  .post { padding-bottom: 96px; }
+
+  /* ── 떠 있는 이전/다음 ─────────────────────────────── */
+  .dock {
+    position: fixed;
+    left: 50%;
+    bottom: var(--s5);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: var(--s1);
+    max-width: calc(100vw - var(--s8));
+    padding: 6px;
+    border-radius: var(--r-pill);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--ring), 0 8px 24px rgba(0, 0, 0, 0.12);
+    font-family: var(--font-product);
+    /* 숨김 상태: 아래로 살짝 내려가 있고 투명 */
+    opacity: 0;
+    transform: translate(-50%, 16px);
+    pointer-events: none;
+    transition:
+      opacity var(--t-std) var(--e-std),
+      transform var(--t-std) var(--e-enter);
+  }
+  .dock.is-on {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+  }
+
+  .dock__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    min-width: 0;
+    max-width: 240px;
+    height: 40px;
+    padding: 0 var(--s4);
+    border-radius: var(--r-pill);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    transition: background var(--t-fast) var(--e-std), color var(--t-fast) var(--e-std);
+  }
+  a.dock__btn:hover { background: var(--brand-tint); color: var(--brand-bright); }
+  .dock__btn.is-off { color: var(--placeholder); }
+  .dock__arrow { font-size: 20px; line-height: 1; margin-top: -2px; }
+  .dock__t {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .dock__mid {
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 var(--s4);
+    display: inline-flex;
+    align-items: center;
+    border-left: 1px solid var(--hairline);
+    border-right: 1px solid var(--hairline);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: var(--muted);
+    transition: color var(--t-fast) var(--e-std);
+  }
+  .dock__mid:hover { color: var(--brand-bright); }
 
   @media (max-width: 640px) {
     .post__nav { grid-template-columns: 1fr; }
     .pn--next { text-align: left; }
     .post__head { margin-bottom: var(--s8); }
+    /* 좁은 화면에서는 제목을 빼고 화살표와 위치만 */
+    .dock__t { display: none; }
+    .dock__btn { padding: 0 var(--s4); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock { transition: opacity var(--t-std) linear; transform: translate(-50%, 0); }
+  }
+
+  @media print {
+    .dock { display: none; }
   }
 </style>
