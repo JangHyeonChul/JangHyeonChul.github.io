@@ -236,6 +236,10 @@ a {
 .diagram .ln--dash { stroke-dasharray: 5 4; }
 .diagram .head { fill: var(--faint); }
 .diagram .lb { fill: var(--brand-bright); font-size: 11.5px; font-weight: 700; }
+.diagram .inner rect { fill: var(--surface); stroke: var(--hairline); stroke-width: 1; }
+.diagram .m { fill: var(--body); font-size: 12.5px; text-anchor: middle; }
+.diagram .group { fill: none; stroke: var(--divider); stroke-width: 1.2; stroke-dasharray: 6 5; }
+.diagram .gl { fill: var(--muted); font-size: 12px; font-weight: 700; }
 .prose figcaption {
   margin-top: var(--s3);
   font-size: 13px;
