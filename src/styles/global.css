@@ -185,6 +185,31 @@ a {
   margin-inline: auto;
 }
 
+/* 본문 표 — 좁은 화면에서는 표만 가로로 밀어 본다 */
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.prose th,
+.prose td {
+  padding: var(--s2) var(--s4);
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  border-bottom-color: var(--divider);
+  background: var(--surface-2);
+}
+.prose td code { white-space: nowrap; }
+
 /* 본문 다이어그램 — 마크다운에 인라인 SVG 로 넣고, 색은 토큰을 따라 테마를 탄다 */
 .prose .diagram {
   margin-inline: 0;
