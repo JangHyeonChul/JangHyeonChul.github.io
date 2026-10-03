@@ -185,6 +185,38 @@ a {
   margin-inline: auto;
 }
 
+/* 본문 다이어그램 — 마크다운에 인라인 SVG 로 넣고, 색은 토큰을 따라 테마를 탄다 */
+.prose .diagram {
+  margin-inline: 0;
+  padding: var(--s5);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: var(--ring);
+  overflow-x: auto;
+}
+.prose .diagram svg {
+  display: block;
+  width: 100%;
+  min-width: 560px;               /* 휴대폰에서는 글자가 뭉개지지 않게 가로로 밀어 본다 */
+  height: auto;
+  font-family: var(--font-product);
+}
+.diagram .box rect { fill: var(--surface-2); stroke: var(--divider); stroke-width: 1.2; }
+.diagram .box--key rect { fill: var(--brand-tint); stroke: var(--brand-bright); }
+.diagram .t { fill: var(--ink); font-size: 15px; font-weight: 700; text-anchor: middle; }
+.diagram .s { fill: var(--muted); font-size: 11.5px; text-anchor: middle; }
+.diagram .ln { fill: none; stroke: var(--faint); stroke-width: 1.5; }
+.diagram .ln--dash { stroke-dasharray: 5 4; }
+.diagram .head { fill: var(--faint); }
+.diagram .lb { fill: var(--brand-bright); font-size: 11.5px; font-weight: 700; }
+.prose figcaption {
+  margin-top: var(--s3);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-align: center;
+}
+
 /* 인라인 코드 */
 .prose :not(pre) > code {
   font-family: var(--font-mono);
