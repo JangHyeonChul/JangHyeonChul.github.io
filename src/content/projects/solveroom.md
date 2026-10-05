@@ -5,7 +5,12 @@ detail: 현재 개발 중입니다. 서버 기본 구성과 카드 도메인 CRU
 stack: [Java 17, Spring Boot 4, WebSocket, MySQL]
 period: 2026.09 – 진행 중
 order: 0
+cover: /covers/solveroom/01-main.png
+gallery:
+  - /covers/solveroom/01-main.png
 repo: https://github.com/JangHyeonChul/SolveRoom
 ---
 
 여러 사람이 한 방에 모여 실시간으로 문제를 함께 푸는 서비스입니다. 현재 개발 중입니다.
+
+위 이미지는 메인 화면 디자인 시안입니다. 카드의 플레이 수와 문제 수는 레이아웃 확인용 예시 값입니다.
