@@ -9,6 +9,7 @@ cover: /covers/solveroom/01-main.png
 gallery:
   - /covers/solveroom/01-main.png
 repo: https://github.com/JangHyeonChul/SolveRoom
+demo: http://3.27.11.248
 ---
 
 여러 사람이 한 방에 모여 실시간으로 문제를 함께 푸는 서비스입니다. 현재 개발 중입니다.
