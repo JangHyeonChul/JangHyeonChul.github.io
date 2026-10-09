@@ -1,6 +1,6 @@
 ---
-title: SolveRoom
-summary: 여러 사람이 한 방에 모여 실시간으로 문제를 함께 푸는 서비스
+title: 퀴즈체크
+summary: 사진, 이미지, 초성 같은 힌트를 보고 정답을 맞히는 온라인 퀴즈 플랫폼
 detail: 현재 개발 중입니다. 서버 기본 구성과 카드 도메인 CRUD API까지 만들었고, WebSocket 기반 실시간 기능을 이어서 붙이고 있습니다.
 stack: [Java 17, Spring Boot 4, WebSocket, MySQL]
 period: 2026.09 – 진행 중
@@ -12,6 +12,6 @@ repo: https://github.com/JangHyeonChul/SolveRoom
 demo: http://3.27.11.248
 ---
 
-여러 사람이 한 방에 모여 실시간으로 문제를 함께 푸는 서비스입니다. 현재 개발 중입니다.
+사진, 이미지, 초성 같은 힌트를 보고 정답을 맞히는 온라인 퀴즈 플랫폼입니다. 지금은 1차 MVP를 개발하고 있습니다.
 
 위 이미지는 메인 화면 디자인 시안입니다. 카드의 플레이 수와 문제 수는 레이아웃 확인용 예시 값입니다.
