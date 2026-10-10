@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 42 1300 474" font-family="'Segoe UI', 'Malgun Gothic', sans-serif">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#1f2430" flood-opacity="0.14"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="6" refY="5" orient="auto">
+      <path d="M1,1 L9,5 L1,9" fill="none" stroke="#c2c8d4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .title   { fill:#1f2430; font-size:16px; font-weight:700; }
+      .sub     { fill:#5b6472; font-size:12px; }
+      .note    { fill:#8a93a3; font-size:11px; font-style:italic; }
+      .box     { fill:#ffffff; filter:url(#shadow); }
+      /* sequential highlight ring */
+      .ring    { fill:none; stroke-width:2.5; opacity:0; }
+      .s1 { animation: lite 8.4s ease-in-out infinite; animation-delay:0s;   }
+      .s2 { animation: lite 8.4s ease-in-out infinite; animation-delay:1.2s; }
+      .s3 { animation: lite 8.4s ease-in-out infinite; animation-delay:2.4s; }
+      .s4 { animation: lite 8.4s ease-in-out infinite; animation-delay:3.6s; }
+      .s5 { animation: lite 8.4s ease-in-out infinite; animation-delay:4.8s; }
+      .s6 { animation: lite 8.4s ease-in-out infinite; animation-delay:6.0s; }
+      .s7 { animation: lite 8.4s ease-in-out infinite; animation-delay:7.2s; }
+      @keyframes lite {
+        0%,100% { opacity:0; }
+        6%      { opacity:1; }
+        18%     { opacity:0; }
+      }
+    </style>
+  </defs>
+
+  <rect width="1300" height="560" fill="#ffffff"/>
+
+  <!-- ===== zones ===== -->
+  <rect x="20" y="62" width="1260" height="196" rx="18" fill="#f8f9fb" stroke="#e3e7ee" stroke-dasharray="6 5"/>
+  <rect x="20" y="300" width="1260" height="196" rx="18" fill="#fffaf3" stroke="#f1e2cc" stroke-dasharray="6 5"/>
+
+  <!-- ===== connectors (behind boxes) ===== -->
+  <g stroke="#d7dce5" stroke-width="2.5">
+    <line x1="270" y1="160" x2="356" y2="160" marker-end="url(#arrow)"/>
+    <line x1="590" y1="160" x2="676" y2="160" marker-end="url(#arrow)"/>
+    <line x1="910" y1="160" x2="996" y2="160" marker-end="url(#arrow)"/>
+    <line x1="1115" y1="220" x2="1115" y2="336" marker-end="url(#arrow)"/>
+    <line x1="1000" y1="400" x2="914" y2="400" marker-end="url(#arrow)"/>
+    <line x1="680" y1="400" x2="594" y2="400" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- ===== flowing particles ===== -->
+  <!-- seg A: push -> 테스트 (dark) -->
+  <g fill="#24292f" filter="url(#glow)">
+    <circle cx="270" cy="160" r="4"><animate attributeName="cx" values="270;356" dur="1.4s" begin="0s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0s" repeatCount="indefinite"/></circle>
+    <circle cx="270" cy="160" r="4"><animate attributeName="cx" values="270;356" dur="1.4s" begin="0.47s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.47s" repeatCount="indefinite"/></circle>
+    <circle cx="270" cy="160" r="4"><animate attributeName="cx" values="270;356" dur="1.4s" begin="0.94s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.94s" repeatCount="indefinite"/></circle>
+  </g>
+  <!-- seg B: 테스트 -> 이미지 빌드 (green) -->
+  <g fill="#2da44e" filter="url(#glow)">
+    <circle cx="590" cy="160" r="4"><animate attributeName="cx" values="590;676" dur="1.4s" begin="0.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.2s" repeatCount="indefinite"/></circle>
+    <circle cx="590" cy="160" r="4"><animate attributeName="cx" values="590;676" dur="1.4s" begin="0.67s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.67s" repeatCount="indefinite"/></circle>
+    <circle cx="590" cy="160" r="4"><animate attributeName="cx" values="590;676" dur="1.4s" begin="1.14s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="1.14s" repeatCount="indefinite"/></circle>
+  </g>
+  <!-- seg C: 이미지 빌드 -> GHCR (docker blue) -->
+  <g fill="#1d63ed" filter="url(#glow)">
+    <circle cx="910" cy="160" r="4"><animate attributeName="cx" values="910;996" dur="1.4s" begin="0.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.1s" repeatCount="indefinite"/></circle>
+    <circle cx="910" cy="160" r="4"><animate attributeName="cx" values="910;996" dur="1.4s" begin="0.57s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.57s" repeatCount="indefinite"/></circle>
+    <circle cx="910" cy="160" r="4"><animate attributeName="cx" values="910;996" dur="1.4s" begin="1.04s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="1.04s" repeatCount="indefinite"/></circle>
+  </g>
+  <!-- seg D: GHCR -> EC2 runner, 아래로 (purple) -->
+  <g fill="#8250df" filter="url(#glow)">
+    <circle cx="1115" cy="220" r="4"><animate attributeName="cy" values="220;336" dur="1.6s" begin="0.3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.6s" begin="0.3s" repeatCount="indefinite"/></circle>
+    <circle cx="1115" cy="220" r="4"><animate attributeName="cy" values="220;336" dur="1.6s" begin="0.83s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.6s" begin="0.83s" repeatCount="indefinite"/></circle>
+    <circle cx="1115" cy="220" r="4"><animate attributeName="cy" values="220;336" dur="1.6s" begin="1.36s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.6s" begin="1.36s" repeatCount="indefinite"/></circle>
+  </g>
+  <!-- seg E: runner -> 컨테이너 교체, 왼쪽으로 (aws orange) -->
+  <g fill="#ec7211" filter="url(#glow)">
+    <circle cx="1000" cy="400" r="4"><animate attributeName="cx" values="1000;914" dur="1.4s" begin="0.15s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.15s" repeatCount="indefinite"/></circle>
+    <circle cx="1000" cy="400" r="4"><animate attributeName="cx" values="1000;914" dur="1.4s" begin="0.62s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.62s" repeatCount="indefinite"/></circle>
+    <circle cx="1000" cy="400" r="4"><animate attributeName="cx" values="1000;914" dur="1.4s" begin="1.09s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="1.09s" repeatCount="indefinite"/></circle>
+  </g>
+  <!-- seg F: 컨테이너 -> 서비스 반영, 왼쪽으로 (teal) -->
+  <g fill="#0ea5b7" filter="url(#glow)">
+    <circle cx="680" cy="400" r="4"><animate attributeName="cx" values="680;594" dur="1.4s" begin="0.35s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.35s" repeatCount="indefinite"/></circle>
+    <circle cx="680" cy="400" r="4"><animate attributeName="cx" values="680;594" dur="1.4s" begin="0.82s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.82s" repeatCount="indefinite"/></circle>
+    <circle cx="680" cy="400" r="4"><animate attributeName="cx" values="680;594" dur="1.4s" begin="1.29s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="1.29s" repeatCount="indefinite"/></circle>
+  </g>
+
+  <!-- ===== node 1: 코드 올리기 ===== -->
+  <g>
+    <rect class="box" x="40" y="100" width="230" height="120" rx="14"/>
+    <rect x="40" y="100" width="230" height="6" rx="3" fill="#24292f"/>
+    <text x="155" y="148" text-anchor="middle" class="title">코드 올리기</text>
+    <text x="155" y="172" text-anchor="middle" class="sub">git push (main 브랜치)</text>
+    <text x="155" y="192" text-anchor="middle" class="note">개발자가 코드를 올리면 시작</text>
+    <rect class="ring s1" x="40" y="100" width="230" height="120" rx="14" stroke="#24292f"/>
+  </g>
+
+  <!-- ===== node 2: 자동 검사 ===== -->
+  <g>
+    <rect class="box" x="360" y="100" width="230" height="120" rx="14"/>
+    <rect x="360" y="100" width="230" height="6" rx="3" fill="#2da44e"/>
+    <text x="475" y="148" text-anchor="middle" class="title">자동 검사</text>
+    <text x="475" y="172" text-anchor="middle" class="sub">GitHub가 테스트를 돌림</text>
+    <text x="475" y="192" text-anchor="middle" class="note">실패하면 여기서 멈춤</text>
+    <rect class="ring s2" x="360" y="100" width="230" height="120" rx="14" stroke="#2da44e"/>
+  </g>
+
+  <!-- ===== node 3: 실행 묶음 만들기 ===== -->
+  <g>
+    <rect class="box" x="680" y="100" width="230" height="120" rx="14"/>
+    <rect x="680" y="100" width="230" height="6" rx="3" fill="#1d63ed"/>
+    <text x="795" y="148" text-anchor="middle" class="title">실행 묶음 만들기</text>
+    <text x="795" y="172" text-anchor="middle" class="sub">Docker 이미지로 포장</text>
+    <text x="795" y="192" text-anchor="middle" class="note">어디서든 똑같이 실행되게</text>
+    <rect class="ring s3" x="680" y="100" width="230" height="120" rx="14" stroke="#1d63ed"/>
+  </g>
+
+  <!-- ===== node 4: 이미지 창고에 저장 ===== -->
+  <g>
+    <rect class="box" x="1000" y="100" width="230" height="120" rx="14"/>
+    <rect x="1000" y="100" width="230" height="6" rx="3" fill="#8250df"/>
+    <text x="1115" y="148" text-anchor="middle" class="title">이미지 창고에 저장</text>
+    <text x="1115" y="172" text-anchor="middle" class="sub">GHCR</text>
+    <text x="1115" y="192" text-anchor="middle" class="note">버전별로 보관</text>
+    <rect class="ring s4" x="1000" y="100" width="230" height="120" rx="14" stroke="#8250df"/>
+  </g>
+
+  <!-- ===== node 5: 서버가 받아 오기 ===== -->
+  <g>
+    <rect class="box" x="1000" y="340" width="230" height="120" rx="14"/>
+    <rect x="1000" y="340" width="230" height="6" rx="3" fill="#ec7211"/>
+    <text x="1115" y="388" text-anchor="middle" class="title">서버가 받아 오기</text>
+    <text x="1115" y="412" text-anchor="middle" class="sub">EC2 안의 runner</text>
+    <text x="1115" y="432" text-anchor="middle" class="note">새 이미지를 직접 내려받음</text>
+    <rect class="ring s5" x="1000" y="340" width="230" height="120" rx="14" stroke="#ec7211"/>
+  </g>
+
+  <!-- ===== node 6: 새 버전으로 교체 ===== -->
+  <g>
+    <rect class="box" x="680" y="340" width="230" height="120" rx="14"/>
+    <rect x="680" y="340" width="230" height="6" rx="3" fill="#0ea5b7"/>
+    <text x="795" y="388" text-anchor="middle" class="title">새 버전으로 교체</text>
+    <text x="795" y="412" text-anchor="middle" class="sub">컨테이너 다시 띄우기</text>
+    <text x="795" y="432" text-anchor="middle" class="note">웹 화면 · API 서버</text>
+    <rect class="ring s6" x="680" y="340" width="230" height="120" rx="14" stroke="#0ea5b7"/>
+  </g>
+
+  <!-- ===== node 7: 배포 끝 ===== -->
+  <g>
+    <rect class="box" x="360" y="340" width="230" height="120" rx="14"/>
+    <rect x="360" y="340" width="230" height="6" rx="3" fill="#64748b"/>
+    <text x="475" y="388" text-anchor="middle" class="title">배포 끝</text>
+    <text x="475" y="412" text-anchor="middle" class="sub">사용자가 새 버전 사용</text>
+    <text x="475" y="432" text-anchor="middle" class="note">사람 손 없이 자동으로</text>
+    <rect class="ring s7" x="360" y="340" width="230" height="120" rx="14" stroke="#64748b"/>
+  </g>
+</svg>
