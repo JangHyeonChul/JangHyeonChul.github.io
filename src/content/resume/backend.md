@@ -32,7 +32,7 @@ skills:
 # 기간·인원은 각 저장소의 커밋 기록 기준. 비워 두면 그 줄이 빠집니다.
 career:
   - company: IT 솔루션 기업
-    role: 주임 · Backend · Data Engineer
+    role: Backend · Data Engineer
     period: 2023.09 – 재직 중
     note: 철도 차량 상태 기반 정비(CBM) 데이터 플랫폼과 MSA 기반 매장 POS 서비스의 백엔드·데이터 개발
     projects:
