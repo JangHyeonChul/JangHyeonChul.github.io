@@ -9,7 +9,7 @@ cover: /covers/solveroom/01-main.png
 gallery:
   - /covers/solveroom/01-main.png
 repo: https://github.com/JangHyeonChul/SolveRoom
-demo: http://3.27.11.248
+demo: https://quizcheck.kr
 ---
 
 사진, 이미지, 초성 같은 힌트를 보고 정답을 맞히는 온라인 퀴즈 플랫폼입니다. 지금은 1차 MVP를 개발하고 있습니다.
