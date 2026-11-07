@@ -5,9 +5,9 @@ detail: 현재 개발 중입니다. 서버 기본 구성과 카드 도메인 CRU
 stack: [Java 17, Spring Boot 4, WebSocket, MySQL]
 period: 2026.09 – 진행 중
 order: 0
-cover: /covers/solveroom/01-main.png
+cover: /covers/solveroom/main-live.png
 gallery:
-  - /covers/solveroom/01-main.png
+  - /covers/solveroom/main-live.png
 repo: https://github.com/JangHyeonChul/SolveRoom
 demo: https://quizcheck.kr
 ---
